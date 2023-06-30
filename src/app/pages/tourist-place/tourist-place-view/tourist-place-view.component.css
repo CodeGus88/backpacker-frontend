@@ -1,0 +1,35 @@
+.paragraph{
+    height: 100%;
+}
+
+.data-container{
+    position: relative;
+    display: inline-block;
+    /* text-align: center; */
+}
+
+.cover-options{
+    position: absolute;
+    bottom: 1%;
+    right: 1%;
+    text-shadow: black 0.1em 0.1em 0.2em;
+    font-size: small;
+}
+
+
+.category-button{
+    --bs-btn-padding-y: .25rem; 
+    --bs-btn-padding-x: .5rem; 
+    --bs-btn-font-size: .75rem;
+}
+
+
+.bg-simple-linear {
+    background: linear-gradient(rgb(255, 255, 255), rgb(204, 204, 204));
+}
+
+
+.vertical-center{
+    display: flex;
+    align-items: center;
+}

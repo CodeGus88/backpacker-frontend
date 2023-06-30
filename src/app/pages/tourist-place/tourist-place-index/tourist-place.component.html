@@ -1,0 +1,79 @@
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="d-flex justify-content-between">
+                    <span class="h6">LUGARES TURÍSTICOS ({{paginate.totalElements}})</span>
+                    <a class="btn btn-success btn-sm" routerLink="/tourist-places/create">
+                        <i class="fa-solid fa-plus"></i> Crear</a>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-8 col-sm-12 mt-2 mb-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar"
+                            aria-describedby="button-addon2" id="search">
+                        <label class="btn btn-outline-secondary" for="search" id="button-addon2"><i
+                                class="fa-solid fa-magnifying-glass"></i></label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 mt-2 mb-2">
+                    <div class="input-group">
+                        <select class="form-select" role="group" aria-label="Default select example"
+                            (change)="onLoadData()" [(ngModel)]="paginate.sort">
+                            <option value="name">Nombre</option>
+                            <option value="createdAt">Fecha de creación</option>
+                            <option value="rating,createdAt">Rating</option>
+                        </select>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
+                            <input type="radio" class="btn-check" id="asc" autocomplete="off"
+                                [checked]="paginate.ascDesc==ASC?true:false" (change)="onLoadData()" [value]="ASC"
+                                [(ngModel)]="paginate.ascDesc" name="ascDesc">
+                            <label class="btn btn-outline-primary" for="asc"><i
+                                    class="fa-solid fa-arrow-down-short-wide"></i></label>
+                            <input type="radio" class="btn-check" id="desc" autocomplete="off"
+                                [checked]="paginate.ascDesc==DESC?true:false" (change)="onLoadData()" [value]="DESC"
+                                [(ngModel)]="paginate.ascDesc" name="ascDesc">
+                            <label class="btn btn-outline-primary" for="desc">
+                                <i class="fa-solid fa-arrow-up-short-wide"></i></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container card-body">
+            <div class="text-center mt-3">
+                <pagination-controls (pageChange)="pageChangeEvent($event)"></pagination-controls>
+            </div>
+            <div class="container">
+                <div class="row mt-3">
+                    <div class="col d-flex justify-content-center mt-3 mb-3"
+                        *ngFor="let item of list | paginate: {itemsPerPage: paginate.size, currentPage: (paginate.page + 1), totalItems: paginate.totalElements}">
+                        <div class="card box-shadow d-flex justify-content-between" style="width: 18rem;">
+                            <div class="img-text-container">
+                                <img class="card-img-top" [src]="getImageUrl(item.uuid, item.imageIcon)"
+                                    onerror="this.src= 'assets/images/default-image.jpg'" alt="ImageIcon"
+                                    (click)="view(item.uuid)" type="button">
+                                <div class="cover-text-right me-1">
+                                    <div *ngFor="let category of getCategoryList(item.categories)">{{category}}</div>
+                                </div>
+                                <div class="cover-text-left ms-1">
+                                    <div>
+                                        <i class="fa-solid fa-star"></i> {{item.rating??0}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body" style="background-color: rgb(250, 250, 243);">
+                                <h5 class="card-title text-center title-resume" title="{{item.name}}">{{item.name}}</h5>
+                                <p class="card-text fw-lighter text-justify resume-resume">{{item.resume}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <pagination-controls (pageChange)="pageChangeEvent($event)"></pagination-controls>
+            </div>
+        </div>
+    </div>
+</div>

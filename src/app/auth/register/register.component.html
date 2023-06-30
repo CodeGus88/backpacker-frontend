@@ -1,17 +1,50 @@
+<div class="container d-flex justify-content-center mt-3">
+    <div class="card w-auto">
+        <div class="card-header">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" routerLink="/register">Registrarse</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <form #registerForm="ngForm" (ngSubmit)="onRegister()">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" name="name" id="name" aria-describedby="name"
+                        [(ngModel)]="newUser.name">
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nombre de usuario</label>
+                    <input type="text" class="form-control" name="username" id="username" aria-describedby="username"
+                        [(ngModel)]="newUser.username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" aria-describedby="email"
+                        [(ngModel)]="newUser.email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" name="password" id="password"
+                        [(ngModel)]="newUser.password">
+                </div>
 
-    <div class="container d-flex justify-content-center mt-3">
-        <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link" routerLink="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" routerLink="/register">Registrarse</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-body">
+                <div class="mb-3">
+                    <label for="passwordConfirmation" class="form-label">Confirmar contraseña</label>
+                    <input type="password" class="form-control" name="passwordConfirmation" id="passwordConfirmation"
+                        [(ngModel)]="passwordConfirmation" required>
+                </div>
+
+                <button type="submit" class="btn btn-outline-success btn-block"><i class="fa-solid fa-circle-plus"></i> Crear</button>
+            </form>
+            <div class="alert alert-danger mt-3" role="alert" *ngIf="registerForm.submitted && errorMessage != null"
+            [innerHTML]="errorMessage">
+                {{errorMessage}}
             </div>
         </div>
     </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="container mt-3  ">
+    <div class="card">
+        <div class="card-header text-bg-secondary">
+            <button class="btn btn-secondary" (click)="ngBack()"><i class="fa-solid fa-arrow-left"></i></button>
+            <b class="ms-1">Nuevo lugar turístico</b>
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="row">
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        <label for="name" class="form-label">Nombre del lugar</label>
+                        <input type="text" class="form-control" id="name" aria-describedby="placeName"
+                            placeholder="Ingresa el nobre del lugar turístico" [(ngModel)]="request.name" name="name">
+                    </div>
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        <label for="category_id" class="form-label">Categoría</label>
+                        <ng-multiselect-dropdown [placeholder]="'Selecciona hasta 3 opciones'" [settings]="dropdownSettings"
+                            [data]="dropdownList" (onSelect)="onItemSelect($event)" [(ngModel)]="selectedItems" name="categories">
+                        </ng-multiselect-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        <label for="resume" class="form-label">Resumen</label>
+                        <input type="text" class="form-control" id="resume" aria-describedby="placResume"
+                            placeholder="Ingrese un breve resumen sobre el lugar (sumario)" [(ngModel)]="request.resume"
+                            name="resume">
+                    </div>
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        <label for="keywords" class="form-label">Palabras clave</label>
+                        <input type="text" class="form-control" id="keywords" aria-describedby="placResume"
+                            placeholder="Ingresa palabras claves para encontrarlo con el buscador"
+                            [(ngModel)]="request.keywords" name="keywords">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="description">Descripción</label>
+                    <textarea class="form-control" placeholder="Descripción detallada del lugar" id="description"
+                        rows="10" [(ngModel)]="request.description" name="description"></textarea>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="isPublic" [(ngModel)]="request.isPublic"
+                        name="isPublic">
+                    <label class="form-check-label" for="isPublic">Público</label>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errors.length > 0">
+                    <p *ngFor="let error of errors">
+                        <b>{{error.field + ": "}}</b> {{error.defaultMessage}}
+                    </p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <button class="btn btn-primary" (click)="create()">Crear</button>
+            </form>
+        </div>
+    </div>
+</div>

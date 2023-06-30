@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
+import { EROLE } from '../enums/role.enum';
 
 // Valores almaenados en el navegador
 const TOKEN_KEY = 'Authtoken';
-const USERNAME_KEY = 'AuthUserName';
-const AUTHORITIES_KEY = 'AuthAuthorities';
 
 @Injectable({
   providedIn: 'root'
@@ -17,42 +16,46 @@ export class TokenService {
   }
 
   public setToken(token: string): void{
-    window.sessionStorage.removeItem(TOKEN_KEY);
-    window.sessionStorage.setItem(TOKEN_KEY, token);
+    window.localStorage.removeItem(TOKEN_KEY);
+    window.localStorage.setItem(TOKEN_KEY, token);
   }
 
-  public getToken(): string{
-    return window.sessionStorage.getItem(TOKEN_KEY)??'';
+  public getToken(): string | null {
+    return window.localStorage.getItem(TOKEN_KEY);
   }
 
-  public setUserName(username: string): void{
-    window.sessionStorage.removeItem(USERNAME_KEY);
-    window.sessionStorage.setItem(USERNAME_KEY, username);
+  public isLogged(): boolean{
+    if(this.getToken())
+      return true;
+    return false;
   }
 
-  public getUserName(): string{
-    return window.sessionStorage.getItem(USERNAME_KEY)??'';
+  public getUsername(): string | null {
+    if(!this.isLogged())
+      return null;
+    const token = this.getToken();
+    const payload = token!.split('.')[1];
+    const payloadDecode = window.atob(payload);
+    const values = JSON.parse(payloadDecode);
+    const username = values.sub;
+    return username;
   }
 
-  public setAuthorities(authorities: string[]): void {
-     window.sessionStorage.removeItem(AUTHORITIES_KEY);
-     window.sessionStorage.setItem(AUTHORITIES_KEY, JSON.stringify(authorities));
-  }
-
-  public getAuthorities(): string[]{
-    this.roles = [];
-    if(sessionStorage.getItem(AUTHORITIES_KEY)){
-      JSON.parse(sessionStorage.getItem(AUTHORITIES_KEY)??'[]').forEach(
-        (authority: string) => {
-          this.roles.push(authority);
-        }
-      );
-    }
-    return this.roles;
+  public hasRole(eRole: EROLE): boolean{
+    if(!this.isLogged())
+      return false;
+    const token = this.getToken();
+    const payload  = token!.split('.')[1];
+    const payloadDecoded = window.atob(payload);
+    const values = JSON.parse(payloadDecoded);
+    const roles = values.roles;
+    if(roles.indexOf(eRole) < 0)
+      return false;
+    return true;
   }
 
   public logout(): void {
-    window.sessionStorage.clear();
+    window.localStorage.clear();
   }
 
 }

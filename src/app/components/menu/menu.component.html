@@ -1,0 +1,75 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div class="d-fluid">
+            <img class="mb-2" src="assets/img/OIG3.png" style="width: 35px; height: 35px;" alt="icon">
+            <a class="navbar-brand" href="#">Backpacker</a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#"><i class="fa-solid fa-house"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/tourist-places"><i class="fa-solid fa-map-location-dot"></i>
+                        Lugares</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fa-solid fa-bowl-food"></i> Comida</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fa-solid fa-store"></i> Restaurantes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fa-solid fa-water-ladder"></i> Recreación</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fa-solid fa-hotel"></i> Hoteles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fa-solid fa-person-walking-luggage"></i> Agencias de
+                        viaje</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="fa-regular fa-face-rolling-eyes" *ngIf="!sessionData.isLogged; else unlogged"></i>
+                        <ng-template #unlogged>
+                            <i class="fa-solid fa-house-user"></i>
+                        </ng-template>
+
+                        {{sessionData.isLogged?sessionData.username:'Sesión'}}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-person-walking-luggage"></i>
+                                Agencias de viaje</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-hotel"></i> Hoteles</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-store"></i> Restaurantes</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-water-ladder"></i> Lugares de
+                                Recreación</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-star"></i> Favoritos</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <a class="dropdown-item" routerLink="/login" *ngIf="!sessionData.isLogged; else loggin">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            Iniciar Sesión
+                        </a>
+                        <ng-template #loggin>
+                            <button class="dropdown-item" (click)="onLogout()">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                Cerrar Sesión
+                            </button>
+                        </ng-template>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,67 @@
+<!-- Modal -->
+<div class="modal fade overflow-auto" id="galeryModal" tabindex="-1"
+    aria-labelledby="galeryModalLabel" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 col-6" id="galeryModalLabel"><i class="fa-regular fa-images"></i> Galería ({{files==undefined?0:files.length}})</h1>
+                <button type="button" class="btn-close col-6" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="clear()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid" *ngIf="!inputFile">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3 p-0 m-0 text-over-container" *ngFor="let item of files">
+                            <img [src]="getImageUrl(item.file)" onerror="this.src='assets/images/default-image.jpg'"
+                                alt="image" class="img-fluid" width="100%" 
+                                type="button" data-bs-toggle="modal"
+                                data-bs-target="#showImage"
+                                (click)="setShowingImg(getImageUrl(item.file))">
+                            <button class="btn btn-danger btn-sm cover-text-right me-1"
+                                (click)="confirmForDelete(item.uuid!)">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="container" *ngIf="inputFile">
+                    <button class="btn" (click)="clear()"><i class="fa-solid fa-xmark"></i></button>
+                    <image-cropper *ngIf="inputFile" [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true"
+                    [aspectRatio]="4 / 3" format="png" (imageCropped)="imageCropped($event)"></image-cropper>
+                    <div *ngIf="inputFile" class="text-center">
+                        <img [src]="croppedImage" class="col-12" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="input-group col-12">
+                        <input type="file" class="form-control" id="inputFile" name="inputFile"
+                            aria-describedby="inputGroupFileAddon04" aria-label="Upload"
+                            (change)="fileChangeEvent($event)" [(ngModel)]="inputFile">
+                        <button class="btn btn-outline-secondary" type="button" id="btnUpload"
+                            (click)="upload()">Subir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- show modal tabindex="-1" -->
+    <div class="modal fade" id="showImage" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-darck">
+                <div class="modal-header">
+                    <div>
+                        <button class="btn btn-sm tn-close" data-bs-toggle="modal" data-bs-target="#galeryModal"><i class="fa-solid fa-arrow-left"></i></button> 
+                        Imagen expandida
+                    </div>
+                </div>
+                <div class="modal-body m-0 p-0">
+                    <img class="img-fluid" height="100%" width="100%" [src]="showingImg" alt="img">
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- end modal show -->

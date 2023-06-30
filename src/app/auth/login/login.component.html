@@ -1,10 +1,12 @@
-<div class="text-center" *ngIf="isLogged else showLoginForm">
-    Ya iniciaste sesión
-</div>
+<!-- <div class="text-center" *ngIf="isLogged else showLoginForm">
+    <div class="alert alert-success" role="alert">
+        ¡Iniciaste sesión con éxito!
+    </div>
+</div> -->
 
-<ng-template #showLoginForm>
+<!-- <ng-template #showLoginForm> -->
     <div class="container d-flex justify-content-center mt-3">
-        <div class="card">
+        <div class="card w-auto">
             <div class="card-header">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -13,27 +15,33 @@
                     <li class="nav-item">
                         <a class="nav-link" routerLink="/register">Registrarse</a>
                     </li>
-                    
                 </ul>
             </div>
             <div class="card-body">
                 <form #loginForm="ngForm" (ngSubmit)="onLogin()" novalidate>
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="username">Nombre de usuario</label>
                         <input type="text" id="username" name="username" class="form-control" 
-                        [(ngModel)]="username" required>
+                        [(ngModel)]="login.username" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" class="form-control" 
-                        [(ngModel)]="password" required>
+                        [(ngModel)]="login.password" required>
                     </div>
-                    <div class="form-group">
-                        <button class="btn btn-outline-success btn-block" [disabled]="!loginForm.valid">Iniciar sesión</button>
+                    <div class="form-group mt-2 ">
+                        <button class="btn btn-outline-success btn-block col-12" [disabled]="!loginForm.valid">
+                            <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+                        </button>
                     </div>
                 </form>
-                <div *ngIf="loginForm.submitted && isLoginFail" class="alert alert-danger mt-3">{{errorMessage}}</div>
+                <!-- <div *ngIf="(loginForm.submitted && isLoginFail)" class="alert alert-danger mt-3"
+                [innerHTML]="errorMessage">
+                    {{errorMessage}}
+                </div> -->
             </div>
         </div>
     </div>
-</ng-template>
+<!-- </ng-template> -->
+
+

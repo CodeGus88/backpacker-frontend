@@ -1,7 +1,7 @@
-export class NewUser {
+export class UserRequest {
     name?: String;
     username?: String;
     email?: String;
     password?: String;
-    authorities?: String[];
+    roles?: String[];
 }

@@ -1,0 +1,91 @@
+<div class="container mt-3  mb-5">
+    <div class="card">
+        <div class="card-header text-bg-secondary d-flex justify-content-between">
+            <div>
+                <button class="btn btn-secondary" (click)="backHistory()"><i class="fa-solid fa-arrow-left"></i></button>
+                <b class="ms-1">Modificar</b>
+            </div>
+            
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="row">
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        <label for="name" class="form-label">Nombre del lugar</label>
+                        <input type="text" class="form-control" id="name" aria-describedby="placeName"
+                            placeholder="Ingresa el nobre del lugar turístico" [(ngModel)]="request.name" name="name">
+                    </div>
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        <label for="category_id" class="form-label">Categorías</label>
+                        <ng-multiselect-dropdown [placeholder]="'Selecciona hasta 3 opciones'"
+                            [settings]="dropdownSettings" [data]="dropdownList" [(ngModel)]="selectedItems" name="categories">
+                        </ng-multiselect-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        <label for="resume" class="form-label">Resumen</label>
+                        <input type="text" class="form-control" id="resume" aria-describedby="placResume"
+                            placeholder="Ingrese un breve resumen sobre el lugar (sumario)" [(ngModel)]="request.resume"
+                            name="resume">
+                    </div>
+                    <div class="mb-3 col-sm-12 col-md-6">
+                        <label for="keywords" class="form-label">Palabras clave</label>
+                        <input type="text" class="form-control" id="keywords" aria-describedby="placResume"
+                            placeholder="Ingresa palabras claves para encontrarlo con el buscador"
+                            [(ngModel)]="request.keywords" name="keywords" maxlength="50">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="description">Descripción</label>
+                    <textarea class="form-control" placeholder="Descripción detallada del lugar" id="description"
+                        [(ngModel)]="request.description" name="description" rows="10"></textarea>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="isPublic" [(ngModel)]="request.isPublic"
+                        name="isPublic">
+                    <label class="form-check-label" for="isPublic">Público</label>
+                </div>
+
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errors.length > 0">
+                    <p *ngFor="let error of errors">
+                        <b>{{error.field + ": "}}</b> {{error.defaultMessage}}
+                    </p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <button class="btn btn-sm btn-secondary" (click)="update()"><i class="fa-solid fa-circle-check"></i>
+                    Actualizar datos</button>
+                <hr>
+                <div class="container mt-3">
+                    <div class="d-flex justify-content-between">
+                        <label class="form-label">Carátula:</label>
+                        <button class="btn btn-sm" (click)="deleteImageIcon()"><i class="fa-regular fa-trash-can"></i></button>
+                    </div>
+                    <div class="container text-center col-12 mb-3">
+                        <img [src]="imageIconUrl" alt="imageIcon" class="rounded">
+                    </div>
+                    <div class="col-md-12">
+                        <input class="form-control" type="file" accept="image/*" (change)="onFileChange($event)" 
+                        [(ngModel)]="imageSelector" name="imageSelector">
+                    </div>
+                    <div class="mt-2 row">
+                        <div class="col-md-6" *ngIf="imageSelector">
+                            <label class="form-label col-12">Imagen seleccionada</label>
+                            <image-cropper [imageChangedEvent]="imgChangeEvt" [maintainAspectRatio]="true"
+                                [aspectRatio]="4 / 3" [resizeToWidth]="256" format="png"
+                                (imageCropped)="cropImg($event)">
+                            </image-cropper>
+                        </div>
+                        <div class="col-md-6" *ngIf="imageSelector">
+                            <label class="form-label col-12">Pre-visualización</label>
+                            <img class="col-12 m-1" [src]="cropImgPreview"/>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-secondary mt-3" (click)="upload()"><i
+                        class="fa-solid fa-circle-check"></i> Actualizar carátula</button>
+            </form>
+        </div>
+    </div>
+
+</div>
