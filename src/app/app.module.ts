@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MenuComponent } from './components/menu/menu.component';
 
 // toast
@@ -27,6 +27,8 @@ import { GaleryComponent } from './components/galery/galery.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { interceptorProvider } from './interceptors/auth-interceptor.interceptor';
 import { RatingComponent } from './components/rating/rating.component';
+import { AddressComponent } from './components/address/address-manager/address.component';
+import { AddressReadOnlyComponent } from './components/address/address-read-only/address-read-only.component';
 
 
 @NgModule({
@@ -42,18 +44,22 @@ import { RatingComponent } from './components/rating/rating.component';
     TouristPlaceEditComponent,
     GaleryComponent,
     ImageViewerComponent,
-    RatingComponent
+    RatingComponent,
+    AddressComponent,
+    AddressReadOnlyComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     NgxPaginationModule,
     ImageCropperModule,
     NgMultiSelectDropDownModule.forRoot()
+    
   ],
   providers: [interceptorProvider],
   bootstrap: [AppComponent],

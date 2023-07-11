@@ -1,3 +1,4 @@
 export enum EEntity{
-    TOURIST_PLACE_FILES = "TOURIST-PLACE-FILES"
+    TOURIST_PLACE_FILES = "TOURIST-PLACE-FILES",
+    TP_ADDRESS = "tp-addresses"
 }

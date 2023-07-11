@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 import { TouristPlaceItem } from '../../dtos/touristplace/item.dto';
 import { PaginableDataInput } from 'src/app/dtos/paginable-data-input.dto';
 import { Request } from 'src/app/dtos/touristplace/request.dto';
-import { EOrder } from 'src/app/enums/e.order.enum';
 import { TouristPlaceDto } from 'src/app/dtos/touristplace/tourist-place.dto';
 
 @Injectable({

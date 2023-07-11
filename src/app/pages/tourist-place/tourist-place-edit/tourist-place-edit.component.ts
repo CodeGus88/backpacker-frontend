@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-// import TouristPlaceDto from 'src/app/dtos/touristplace/tourist-place.dto';
 import { Request } from 'src/app/dtos/touristplace/request.dto';
 import { ToastrService } from 'ngx-toastr';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
 import { ActivatedRoute } from '@angular/router';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
-import { CategoryService } from 'src/app/services/categories/category.service';
+import { CategoryService } from 'src/app/services/categoriy/category.service';
 import { Category } from 'src/app/dtos/category/category.dto';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { environment } from 'src/environments/environment';
@@ -38,6 +37,9 @@ export class TouristPlaceEditComponent {
   protected selectedItems: Category[] = [];
   protected dropdownSettings: IDropdownSettings = {};
 
+  // for address child
+  protected eEntity = EEntity;
+
   constructor(
     private toast: ToastrService,
     private touristPlaceService: TouristPlaceService,
@@ -48,7 +50,6 @@ export class TouristPlaceEditComponent {
     this.tpDto = new TouristPlaceDto();
     this.tpDto.uuid = this.route.snapshot.params['uuid'];
     this.errors = [];
-    // this.categories = [];
   }
 
   ngOnInit() {

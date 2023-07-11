@@ -85,7 +85,7 @@ export class TouristPlaceComponent {
   }
 
   view(uuid?: String): void {
-    this.router.navigate(['tourist-places/view/' + uuid]);
+    this.router.navigate(['touristplaces/view/' + uuid]);
   }
 
   protected getImageUrl(parentUuid?: String, imageIcon?: String): String {

@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, Output, ViewChild, EventEmitter } from '@angular/core';
-import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { ToastrService } from 'ngx-toastr';
 import { FileDto } from 'src/app/dtos/file/file.dto';
 import { EEntity } from 'src/app/enums/e-entity.enum';
@@ -13,15 +13,15 @@ import Swal from 'sweetalert2';
   templateUrl: './galery.component.html',
   styleUrls: ['./galery.component.css']
 })
-export class GaleryComponent{
+export class GaleryComponent {
 
   imageChangedEvent: any = '';
   inputFile: any = '';
   croppedImage: any = '';
-  @ViewChild('btnClose') btnClose!:ElementRef;
+  @ViewChild('btnClose') btnClose!: ElementRef;
 
   protected file: any;
-  protected elementUuid:string;
+  protected elementUuid: string;
 
   // from father
   @Input() eModule: EModule | undefined;
@@ -35,23 +35,21 @@ export class GaleryComponent{
 
   showingImg: string = '';
 
-  constructor(private service: GaleryService, private toast: ToastrService){
+  constructor(private service: GaleryService, private toast: ToastrService) {
     this.elementUuid = '';
     this.files = [];
-    console.log("galery loader contrustor");
   }
 
-  ngOnInit(){
-  }
+  ngOnInit() { }
 
-  private loadFiles(){
+  private loadFiles() {
     this.service.findByEntityUuid(this.eEntity!, this.entityUuid!).subscribe({
       next: data => {
         this.files = data;
         this.changeListEvent.emit(this.files);
         console.log(data);
       },
-      error: error =>{
+      error: error => {
         console.log(error);
       }
     });
@@ -80,17 +78,17 @@ export class GaleryComponent{
     return new File([u8arr], filename, { type: mime });
   }
 
-  clear(){
+  clear() {
     this.file = '';
     this.inputFile = '';
     this.croppedImage = '';
     this.imageChangedEvent = '';
   }
 
-  upload(){
+  upload() {
     let formData = new FormData();
     formData.append('file', this.file);
-    formData.append('parentUuid', this.entityUuid??'');
+    formData.append('parentUuid', this.entityUuid ?? '');
     this.service.upload(this.eEntity!, formData).subscribe({
       next: data => {
         this.toast.success("La imagen se subió a la galería", "ÉXITO");
@@ -110,11 +108,11 @@ export class GaleryComponent{
     return `${environment.mediaPartialUrl}/${this.eEntity!.toLowerCase()}/${this.entityUuid}/${image}`;
   }
 
-  setShowingImg(url: string){
+  setShowingImg(url: string) {
     this.showingImg = url;
   }
 
-  confirmForDelete(uuid: string){
+  confirmForDelete(uuid: string) {
     Swal.fire({
       title: 'CONFIRMACIÓN',
       text: "¿Estas seguro de eliminar esta imagen?",
@@ -130,20 +128,20 @@ export class GaleryComponent{
     })
   }
 
-  delete(uuid: string){
+  delete(uuid: string) {
     this.service.deleteByUuid(this.eEntity!, uuid).subscribe({
-      next: data =>{
-        if(data){
+      next: data => {
+        if (data) {
           this.loadFiles();
           this.toast.success("Se eliminó con éxito", "ÉXITO");
-        }else
+        } else
           this.toast.error("No se pudo eliminar", "FALLÓ");
       },
-      error: error =>{
+      error: error => {
         this.toast.error(error.message, "ERROR");
         console.log(error);
       }
     });
-  } 
+  }
 
 }

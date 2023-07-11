@@ -1,3 +1,4 @@
+import { AddressDto } from "../address/address.dto";
 import { Category } from "../category/category.dto";
 import { FileDto } from "../file/file.dto";
 
@@ -13,5 +14,5 @@ export class TouristPlaceDto{
     updatedAt?: Date;
     categories?: Category[] = [];
     files: FileDto[] = [];
-    addresses: any[] = [];
+    addresses: AddressDto[] = [];
 }

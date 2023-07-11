@@ -13,10 +13,11 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'tourist-places', component: TouristPlaceComponent },
-  { path: 'tourist-places/view/:uuid', component: TouristPlaceViewComponent },
-  { path: 'tourist-places/create', component: TouristPlaceCreateComponent },
-  { path: 'tourist-places/edit/:uuid', component: TouristPlaceEditComponent }
+  { path: 'touristplaces', component: TouristPlaceComponent },
+  { path: 'touristplaces/view/:uuid', component: TouristPlaceViewComponent },
+  { path: 'touristplaces/create', component: TouristPlaceCreateComponent },
+  { path: 'touristplaces/edit/:uuid', component: TouristPlaceEditComponent },
+  { path: '**', redirectTo: '', pathMatch: 'full'}
 ];
 
 @NgModule({

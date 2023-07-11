@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
 import { environment } from 'src/environments/environment';
@@ -9,7 +9,8 @@ import { EEntity } from 'src/app/enums/e-entity.enum';
 import { FileDto } from 'src/app/dtos/file/file.dto';
 import { TouristPlaceDto } from 'src/app/dtos/touristplace/tourist-place.dto';
 import { ERating } from 'src/app/enums/rating.enum';
-import { RatingComponent } from 'src/app/components/rating/rating.component';
+import { AddressDto } from 'src/app/dtos/address/address.dto';
+// import { RatingComponent } from 'src/app/components/rating/rating.component';
 
 @Component({
   selector: 'app-tourist-place-view',
@@ -48,7 +49,7 @@ export class TouristPlaceViewComponent {
   onLoadData(){
     this.touristPlaceService.findById(this.uuid).subscribe({
       next: data => {
-        console.log("data", data);
+        // console.log("data", data);
         this.tpDto = data;
       },
       error: e => {
@@ -90,8 +91,8 @@ export class TouristPlaceViewComponent {
           {next: data =>{
             if(data){
               Swal.fire(
-                'Deleted!',
-                'Your file has been deleted.',
+                '¡Eliminado!',
+                'Se eliminó correctamente.',
                 'success'
               )
               window.history.back();
@@ -131,6 +132,14 @@ export class TouristPlaceViewComponent {
 
   refreshPunctuationEvent($event: any){
     this.punctuation = $event;
+  }
+
+  getGoogleLink(addressDto: AddressDto): string{
+    return `https://maps.google.com/?q=${addressDto.lat},${addressDto.lng}`;
+  }
+
+  getGoogleEarth(addressDto: AddressDto): string{
+    return `https://earth.google.com/web/@${addressDto.lat},${addressDto.lng}`;
   }
 
 }

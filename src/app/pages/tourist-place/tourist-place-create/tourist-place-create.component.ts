@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Request } from 'src/app/dtos/touristplace/request.dto';
 import { TouristPlaceService } from 'src/app/services/tourist-place/tourist-place.service';
 import { ToastrService } from 'ngx-toastr';
-import { CategoryService } from 'src/app/services/categories/category.service';
+import { CategoryService } from 'src/app/services/categoriy/category.service';
 import { Category } from 'src/app/dtos/category/category.dto';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
