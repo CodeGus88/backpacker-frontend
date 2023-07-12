@@ -49,7 +49,7 @@ export class TouristPlaceViewComponent {
   onLoadData(){
     this.touristPlaceService.findById(this.uuid).subscribe({
       next: data => {
-        // console.log("data", data);
+        console.log("data", data);
         this.tpDto = data;
       },
       error: e => {

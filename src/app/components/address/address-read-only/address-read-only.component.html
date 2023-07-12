@@ -1,18 +1,16 @@
-
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
 <div class="bg-light bg-gradient mt-1 rounded p-2" *ngFor="let item of addresses">
-    <small class="text-break fw-semibold me-1">{{item.title}}:</small>
-    <small class="fw-light">
-      {{item.continent}}, {{item.country}},
-      {{item.state}}, {{item.county}}:
-      {{item.address}}
-    </small>
-    <a class="btn btn-sm btn-outline-secondary"
-      [href]="getGoogleLink(item)" target="_blank">
-      <i class="fa-solid fa-map-location-dot"></i> Google Maps
-    </a>
-    <a class="btn btn-sm btn-outline-secondary"
-      [href]="getGoogleEarth(item)" target="_blank">
-      <i class="fa-solid fa-map-location-dot"></i> Google Earth
-    </a>
-  </div>
+  <small class="text-break fw-semibold me-1">{{item.title}}:</small>
+  <small class="fw-light">
+    {{item.continent}}, {{item.country}},
+    {{item.state}}, {{item.county}}:
+    {{item.address}}
+  </small>
+  <a class="btn btn-sm btn-outline-secondary" [href]="getGoogleLink(item)" target="_blank">
+    <i class="fa-solid fa-map-location-dot"></i> Google Maps
+  </a>
+  <a class="btn btn-sm btn-outline-secondary" [href]="getGoogleEarth(item)" target="_blank">
+    <i class="fa-solid fa-map-location-dot"></i> Google Earth
+  </a>
+</div>
 <div id="map" class="map"></div>

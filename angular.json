@@ -38,7 +38,8 @@
               "@fortawesome/fontawesome-free/js/all.min.js"
             ],
             "allowedCommonJsDependencies": [
-              "sweetalert2"
+              "sweetalert2",
+              "rbush"
             ]
           },
           "configurations": {
