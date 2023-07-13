@@ -1,4 +1,4 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { AddressDto } from 'src/app/dtos/address/address.dto';
 
 // Map
@@ -29,15 +29,13 @@ export class AddressReadOnlyComponent {
   private markerSource: VectorSource | undefined;
 
   constructor() {
-
-    console.log("contructor", this.addresses)
-
+    
   }
 
   ngOnInit(): void {
     // paso 5
     this.map = new Map({
-      target: 'map',
+      target: 'viewMap',
       layers: [
         new TileLayer({
           source: new OSM()
@@ -48,9 +46,8 @@ export class AddressReadOnlyComponent {
         zoom: 8
       })
     });
-
+    
     // paso 6
-
     this.markerSource = new VectorSource();
 
     const markerStyle = new Style({
@@ -69,7 +66,7 @@ export class AddressReadOnlyComponent {
       source: this.markerSource,
       style: markerStyle
     });
-    this.map.addLayer(markerLayer);
+    this.map!.addLayer(markerLayer);
 
     // Agregar marcadores
     this.addMarkers();
@@ -106,22 +103,19 @@ export class AddressReadOnlyComponent {
       });
       this.map!.addOverlay(titleOverlay);
     })
-
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(":)", this.addresses);
-    // this.map.updateSize();
-    if (this.addresses)
+  ngAfterContentInit(): void{
+    if (this.addresses && this.map)
       if (this.addresses.length > 0) {
-        this.setCenter(this.addresses[0].lng, this.addresses[0].lat, 1000);
-        this.setZoom(14, 1000);
+        this.setCenter(this.addresses[0].lng, this.addresses[0].lat, 0);
+        this.setZoom(14, 0);
       }
     this.addMarkers();
   }
 
-  setCenter(lon: number, lat: number, duration: number) {
-    let coordenadas = fromLonLat([lon, lat]);
+  setCenter(lng: number, lat: number, duration: number) {
+    let coordenadas = fromLonLat([lng, lat]);
     this.map!.getView().animate({
       center: coordenadas,
       duration: duration

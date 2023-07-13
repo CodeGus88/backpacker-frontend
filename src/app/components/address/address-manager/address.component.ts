@@ -56,7 +56,7 @@ export class AddressComponent {
   ngOnInit(): void {
     this.refreshAddresses();
     this.map = new Map({
-      target: 'map',
+      target: 'editorMap',
       layers: [
         new TileLayer({
           source: new OSM()

@@ -13,9 +13,10 @@
       </div>
     </div>
     <div class="card-body">
-      <div class="container">
-        <div class="row bg-white">
-          <div class="col-sm-12 col-md-6 border border-0 p-0 rounded bg-simple-linear">
+      <div class="container p-0">
+        <div class="row ps-2 pe-2">
+
+          <div class="col-sm-12 col-md-6 border border-1 p-0 rounded bg-simple-linear">
             <div id="carouselControls" class="carousel slide align-middle" data-bs-ride="carousel">
               <div class="carousel-inner rounded">
                 <div [ngClass]="{'carousel-item': true, 'active': tpDto.files.length == 0}" *ngIf="tpDto.imageIcon">
@@ -44,6 +45,7 @@
               </button>
             </div>
           </div>
+          
           <div class="col-sm-12 col-md-6 d-flex border border-1 pt-2 bg-simple-linear rounded">
             <div class="container-flex data-container align-middle col-12">
               <h1 class="h1 text-center mt-2 mb-2">
@@ -79,18 +81,19 @@
             </div>
           </div>
         </div>
-        <div class="container mt-3 p-0">
-          <div class="row p-0">
+
+        <div class="container mt-3">
+          <div class="row">
             <h2 class="h2 p-0">Descripción</h2>
             <div [innerHTML]="format(tpDto.description)" class="mt-3 text-justify p-0">
             </div>
           </div>
         </div>
 
-        <div class="contaimer mt-3 p-0">
-          <div class="row p-0">
+        <div class="container mt-3" *ngIf="tpDto.addresses.length > 0" >
+          <div class="row">
             <h2 class="h2 p-0">Direcciones</h2>
-            <app-address-read-only [addresses]="tpDto.addresses"></app-address-read-only>
+            <app-address-read-only [addresses]="tpDto.addresses" class="p-0"></app-address-read-only>
           </div>
         </div>
 
