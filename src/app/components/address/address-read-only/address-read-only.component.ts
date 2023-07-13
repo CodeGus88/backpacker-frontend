@@ -92,6 +92,7 @@ export class AddressReadOnlyComponent {
       titleElement.style.borderTopLeftRadius = '10px';
       titleElement.style.borderBottomRightRadius = '10px';
       titleElement.style.borderBottomLeftRadius = '10px';
+      titleElement.style.border = '2px solid red';
 
       // Crear una superposición para mostrar el título del marcador
       let titleOverlay = new Overlay({
