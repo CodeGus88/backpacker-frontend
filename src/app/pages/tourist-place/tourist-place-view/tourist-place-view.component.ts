@@ -2,15 +2,15 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
 import { environment } from 'src/environments/environment';
-import { ToastrService } from 'ngx-toastr';
-import Swal from 'sweetalert2';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { EModule } from 'src/app/enums/e-module.enum';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { FileDto } from 'src/app/dtos/file/file.dto';
 import { TouristPlaceDto } from 'src/app/dtos/touristplace/tourist-place.dto';
 import { ERating } from 'src/app/enums/rating.enum';
 import { AddressDto } from 'src/app/dtos/address/address.dto';
-// import { RatingComponent } from 'src/app/components/rating/rating.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from 'src/app/components/confirm-dialog.component';
 
 @Component({
   selector: 'app-tourist-place-view',
@@ -36,7 +36,8 @@ export class TouristPlaceViewComponent {
   constructor(
     private route: ActivatedRoute, 
     private touristPlaceService: TouristPlaceService,
-    private toast: ToastrService
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ){
     this.uuid = this.route.snapshot.params['uuid'];
     this.tpDto = new TouristPlaceDto();
@@ -76,36 +77,29 @@ export class TouristPlaceViewComponent {
   deleteByUuid(uuid: String = '') {
     if (!uuid)
       return;
-    Swal.fire({
-      title: 'CONFIRMACIÓN',
-      text: "¿Estás seguro de eliminar este lugar turístico?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, ¡Eliminar este recurso!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.touristPlaceService.deleteByUuid(uuid).subscribe(
-          {next: data =>{
-            if(data){
-              Swal.fire(
-                '¡Eliminado!',
-                'Se eliminó correctamente.',
-                'success'
-              )
-              window.history.back();
-              
-            } else
-              this.toast.error("No se pudo eliminar el recurso", "RECHAZADO");
-          },
-          error: e => {
-            this.toast.error("e.message", "ERROR");
-          }
-        });
-      }
-    })
+
+      const dialogRef = this.dialog.open(ConfirmDialog, {
+        width: '250px',
+        data: {name: 'Nombre'}
+      });
+    
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.isConfirmed) {
+          this.touristPlaceService.deleteByUuid(uuid).subscribe(
+            {next: data =>{
+              if(data){
+                this.snackBar.open("Se eliminó correctamente.", "¡Eliminado!", {duration: 3000})
+                window.history.back();
+                
+              } else
+                this.snackBar.open("No se pudo eliminar el recurso", "RECHAZADO", {duration: 3000})
+            },
+            error: e => {
+              this.snackBar.open(e.message, "ERROR", {duration: 3000})
+            }
+          });
+        }
+      });
   }
 
   format(text: String = ''): String{
@@ -113,7 +107,7 @@ export class TouristPlaceViewComponent {
   }
 
   showInfo(text: String = "none", title: String = "title"): void{
-    this.toast.info(text.toString(), title.toString().toUpperCase());
+    this.snackBar.open(text.toString(), title.toString().toUpperCase(), {duration: 15000});
   }
 
   changeListEvent($files: FileDto[]) {
@@ -125,7 +119,7 @@ export class TouristPlaceViewComponent {
       file = new FileDto();
       file.file = this.tpDto.imageIcon?.toString();
       file.entityUuid = this.tpDto.uuid?.toString();
-      this.toast.info("Carátula del recurso", "CARÁTULA");
+      this.snackBar.open("Caráatula del recurso", "CARÁTULA", {duration: 3000});
     }
     this.clickedImg = file;
   }

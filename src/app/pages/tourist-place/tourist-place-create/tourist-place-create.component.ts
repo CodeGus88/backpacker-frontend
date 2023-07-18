@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { Request } from 'src/app/dtos/touristplace/request.dto';
 import { TouristPlaceService } from 'src/app/services/tourist-place/tourist-place.service';
-import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CategoryService } from 'src/app/services/categoriy/category.service';
 import { Category } from 'src/app/dtos/category/category.dto';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
+
 
 @Component({
   selector: 'app-tourist-place-create',
@@ -24,7 +25,7 @@ export class TouristPlaceCreateComponent {
 
   constructor(
     private touristPlaceService: TouristPlaceService,
-    private toast: ToastrService,
+    private snackBar: MatSnackBar,
     private categoryService: CategoryService
   ) {
     this.request = new Request();
@@ -39,7 +40,7 @@ export class TouristPlaceCreateComponent {
         this.categories = data;
       },
       error: e => {
-        this.toast.error("No se pudieron cargar las categorías", "ERROR");
+        this.snackBar.open("No se pudieron cargar las categorías", "ERROR", {duration: 3000})
         console.log(e.message);
       }
     });
@@ -74,11 +75,11 @@ export class TouristPlaceCreateComponent {
       next: data => {
         console.log(data);
         window.history.back();
-        this.toast.success("Se guardó correctamente", "EXITO");
       },
       error: e => {
         this.errors = e.error.errors;
-        this.toast.error(e.error.error, "ERROR");
+        console.log(e);
+        this.snackBar.open("Algo salió mal", "ERROR");
       }
     });
   }

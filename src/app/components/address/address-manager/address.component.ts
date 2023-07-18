@@ -1,4 +1,3 @@
-
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Collection, Feature } from 'ol';
 import Map from 'ol/Map'; import View from 'ol/View';
@@ -11,12 +10,16 @@ import OSM from 'ol/source/OSM';
 import VectorSource from 'ol/source/Vector';
 import { MapService } from 'src/app/services/map/map.service';
 import { AddressRequest } from '../../../dtos/address/address-request.dto';
-import { ToastrService } from 'ngx-toastr';
+// import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddressService } from 'src/app/services/address/address.service';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { EVerb } from 'src/app/enums/e-verbs.enum';
 import { AddressDto } from 'src/app/dtos/address/address.dto';
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from '../../confirm-dialog.component';
+
 
 @Component({
   selector: 'app-address',
@@ -39,7 +42,12 @@ export class AddressComponent {
   protected eVerb = EVerb;
   protected editableUuid?: string | undefined;
 
-  constructor(private mapService: MapService, private addressService: AddressService, private toast: ToastrService) {
+  constructor(
+    private mapService: MapService, 
+    private addressService: AddressService, 
+    private snackBar: MatSnackBar, 
+    public dialog: MatDialog
+    ) {
     this.fuente = new VectorSource();
     this.marker = new Feature();
     this.request = new AddressRequest();
@@ -177,14 +185,17 @@ export class AddressComponent {
             this.request.county = data.results[0].components.county;
             this.request.entityUuid = this.entityUuid;
             if (!this.request.title)
-              this.toast.error("Título requerido");
+              // this.toast.error("Título requerido");
+              this.snackBar.open("Título requerido", 'INCONSISTENTE', {duration: 3000});
             else if (!this.request.address)
-              this.toast.error("La dirección es requerida")
+              // this.toast.error("La dirección es requerida")
+              this.snackBar.open("La dirección es requerida", 'INCONSISTENTE', {duration: 3000});
             else if (eVerb == EVerb.CREATE) {
               this.addressService.create(this.eEntity, this.request).subscribe({
                 next: data => {
                   console.log(data);
-                  this.toast.success("Se registró correctamente", "ÉXITO");
+                  // this.toast.success("Se registró correctamente", "ÉXITO");
+                  this.snackBar.open("Se registró correctamente", 'ÉXITO', {duration: 3000});
                   this.btnClose.nativeElement.click();
                   this.refreshAddresses();
                 },
@@ -194,13 +205,15 @@ export class AddressComponent {
               });
             } else if (eVerb == EVerb.UPDATE) {
               if (!this.editableUuid) {
-                this.toast.error("uuid requerido")
+                // this.toast.error("uuid requerido")
+                this.snackBar.open("uuid requerido", 'INCONSISTENTE', {duration: 3000});
                 return;
               }
               this.addressService.update(this.eEntity, this.editableUuid, this.request).subscribe({
                 next: data => {
                   console.log(data);
-                  this.toast.success("Se actualizó correctamente", "ÉXITO");
+                  // this.toast.success("Se actualizó correctamente", "ÉXITO");
+                  this.snackBar.open("Se actualizó correctamente", 'OK', {duration: 3000});
                   this.btnClose.nativeElement.click();
                   this.refreshAddresses();
                 },
@@ -217,7 +230,8 @@ export class AddressComponent {
         }
       });
     else
-      this.toast.error("Debes marcar una ubicacíon en el mapa", "INCOMPLETO");
+      // this.toast.error("Debes marcar una ubicacíon en el mapa", "INCOMPLETO");
+      this.snackBar.open("Debes marcar una ubicacíon en el mapa", 'INCONSISTENTE', {duration: 3000});
   }
 
   refreshAddresses(): void {
@@ -232,34 +246,64 @@ export class AddressComponent {
   }
 
   deleteByEntityUuid(uuid: string) {
-    Swal.fire({
-      title: '¿Estas seguro?',
-      text: "¡Se eliminará esta dirección!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, ¡Eliminar!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '250px',
+      data: {name: 'Nombre'}
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('El diálogo fue cerrado', result);
+        if (result) {
         this.addressService.deleteByUuid(this.eEntity, uuid).subscribe({
           next: data => {
             console.log(data);
-            Swal.fire(
-              '¡Eliminado!',
-              'El recurso se eliminó correctamente.',
-              'success'
-            )
+            // Swal.fire(
+            //   '¡Eliminado!',
+            //   'El recurso se eliminó correctamente.',
+            //   'success'
+            // )
+            this.snackBar.open("El recurso se eliminó correctamente", 'OK', {duration: 3000})
             this.refreshAddresses();
           },
           error: error => {
             console.log(error);
-            this.toast.error("Error al intentar eliminar el recurso", "ERROR")
+            // this.toast.error("Error al intentar eliminar el recurso", "ERROR")
+            this.snackBar.open("Error al intentar eliminar el recurso", 'ERROR', {duration: 3000})
           }
         });
       }
-    })
+    });
+
+    
+    // Swal.fire({
+    //   title: '¿Estas seguro?',
+    //   text: "¡Se eliminará esta dirección!",
+    //   icon: 'warning',
+    //   showCancelButton: true,
+    //   confirmButtonColor: '#3085d6',
+    //   cancelButtonColor: '#d33',
+    //   confirmButtonText: 'Sí, ¡Eliminar!',
+    //   cancelButtonText: 'Cancelar'
+    // }).then((result) => {
+    //   if (result.isConfirmed) {
+    //     this.addressService.deleteByUuid(this.eEntity, uuid).subscribe({
+    //       next: data => {
+    //         console.log(data);
+    //         Swal.fire(
+    //           '¡Eliminado!',
+    //           'El recurso se eliminó correctamente.',
+    //           'success'
+    //         )
+    //         this.refreshAddresses();
+    //       },
+    //       error: error => {
+    //         console.log(error);
+    //         this.toast.error("Error al intentar eliminar el recurso", "ERROR")
+    //       }
+    //     });
+    //   }
+    // })
   }
 
 }

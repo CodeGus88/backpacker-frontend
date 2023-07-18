@@ -1,12 +1,15 @@
 import { Component, ElementRef, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
-import { ToastrService } from 'ngx-toastr';
 import { FileDto } from 'src/app/dtos/file/file.dto';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { EModule } from 'src/app/enums/e-module.enum';
 import { GaleryService } from 'src/app/services/galery/galery.service';
 import { environment } from 'src/environments/environment';
-import Swal from 'sweetalert2';
+// import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
+// import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from '../confirm-dialog.component';
 
 @Component({
   selector: 'app-galery',
@@ -35,7 +38,11 @@ export class GaleryComponent {
 
   showingImg: string = '';
 
-  constructor(private service: GaleryService, private toast: ToastrService) {
+  constructor(
+    private service: GaleryService, 
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+    ) {
     this.elementUuid = '';
     this.files = [];
   }
@@ -91,14 +98,16 @@ export class GaleryComponent {
     formData.append('parentUuid', this.entityUuid ?? '');
     this.service.upload(this.eEntity!, formData).subscribe({
       next: data => {
-        this.toast.success("La imagen se subió a la galería", "ÉXITO");
+        // this.toast.success("La imagen se subió a la galería", "ÉXITO");
+        this.snackBar.open("La imagen se subió a la galería", "ÉXITO", {duration: 3000});
         console.log(data);
         this.loadFiles();
         this.clear();
       },
       error: error => {
         console.log(error);
-        this.toast.error("Algo salió mal", "ERROR")
+        // this.toast.error("Algo salió mal", "ERROR")
+        this.snackBar.open("Algo salió mal", "ERROR", {duration: 3000});
       }
     });
 
@@ -113,19 +122,32 @@ export class GaleryComponent {
   }
 
   confirmForDelete(uuid: string) {
-    Swal.fire({
-      title: 'CONFIRMACIÓN',
-      text: "¿Estas seguro de eliminar esta imagen?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, ¡eliminar ahora!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.delete(uuid)
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '250px',
+      data: {name: 'Nombre'}
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.delete(uuid);
       }
-    })
+    });
+
+
+    // Swal.fire({
+    //   title: 'CONFIRMACIÓN',
+    //   text: "¿Estas seguro de eliminar esta imagen?",
+    //   icon: 'warning',
+    //   showCancelButton: true,
+    //   confirmButtonColor: '#3085d6',
+    //   cancelButtonColor: '#d33',
+    //   confirmButtonText: 'Sí, ¡eliminar ahora!'
+    // }).then((result) => {
+    //   if (result.isConfirmed) {
+    //     this.delete(uuid)
+    //   }
+    // })
   }
 
   delete(uuid: string) {
@@ -133,12 +155,15 @@ export class GaleryComponent {
       next: data => {
         if (data) {
           this.loadFiles();
-          this.toast.success("Se eliminó con éxito", "ÉXITO");
+          // this.toast.success("Se eliminó con éxito", "ÉXITO");
+          this.snackBar.open("Se eliminó con éxito", "ÉXITO", {duration: 3000});
         } else
-          this.toast.error("No se pudo eliminar", "FALLÓ");
+          // this.toast.error("No se pudo eliminar", "FALLÓ");
+          this.snackBar.open("No se pudo eliminar", "FALLÓ", {duration: 3000});
       },
       error: error => {
-        this.toast.error(error.message, "ERROR");
+        // this.toast.error(error.message, "ERROR");
+        this.snackBar.open(error.message, "ERROR", {duration: 3000});
         console.log(error);
       }
     });

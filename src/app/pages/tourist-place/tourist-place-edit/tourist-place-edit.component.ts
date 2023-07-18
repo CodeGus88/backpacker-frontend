@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Request } from 'src/app/dtos/touristplace/request.dto';
-import { ToastrService } from 'ngx-toastr';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
 import { ActivatedRoute } from '@angular/router';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -8,9 +7,11 @@ import { CategoryService } from 'src/app/services/categoriy/category.service';
 import { Category } from 'src/app/dtos/category/category.dto';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { environment } from 'src/environments/environment';
-import Swal from 'sweetalert2';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { TouristPlaceDto } from 'src/app/dtos/touristplace/tourist-place.dto';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from 'src/app/components/confirm-dialog.component';
 
 @Component({
   selector: 'app-tourist-place-edit',
@@ -41,7 +42,8 @@ export class TouristPlaceEditComponent {
   protected eEntity = EEntity;
 
   constructor(
-    private toast: ToastrService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private touristPlaceService: TouristPlaceService,
     private categoryService: CategoryService,
     private route: ActivatedRoute
@@ -72,11 +74,11 @@ export class TouristPlaceEditComponent {
         error: e => {
           console.log(e);
           if (e.status = 404)
-            this.toast.error("No se encontró el recurso " + this.tpDto.uuid, "ERROR " + e.status);
+            this.snackBar.open("No se encontró el recurso " + this.tpDto.uuid, "ERROR " + e.status, {duration: 3000})
           else if (e.status = 400)
-            this.toast.error("Error en el sistema " + this.tpDto.uuid, "ERROR " + e.status);
+            this.snackBar.open("Error en el sistema " + this.tpDto.uuid, "ERROR " + e.status, {duration: 3000})
           else
-            this.toast.error("Ocurrió un error al cargar el elemento " + this.tpDto.uuid, "ERROR " + e.status);
+            this.snackBar.open("Ocurrió un error al cargar el elemento " + this.tpDto.uuid, "ERROR " + e.status, {duration: 3000})
         }
       }
     );
@@ -116,12 +118,12 @@ export class TouristPlaceEditComponent {
       {
         next: data => {
           console.log(data);
-          this.toast.success("Se guardaron los cambios", "EXITO");
+          this.snackBar.open("Se guardaron los cambios", "ÉXITO", {duration: 3000})
         },
         error: e => {
           console.log("Código del error: ", e);
           if(e.status = 401)
-            this.toast.error("No tiene los privilegios para realizar está acción", "SIN PERMISO");
+            this.snackBar.open("No tiene los privilegios para realizar está acción", "SIN PERMISO " + e.status, {duration: 3000})
           else
            this.errors = e.error.errors;
         }
@@ -144,11 +146,11 @@ export class TouristPlaceEditComponent {
         this.imgChangeEvt = '';
         this.cropImgPreview = '';
         this.file = null;
-        this.toast.success("Se cambio la carátula", "EXITO");
+        this.snackBar.open("Se cambio la carátula", "EXITO", {duration: 3000});
       },
       error: error => {
         if(error.status = 401)
-        this.toast.error("No tiene los privilegios para realizar está acción", "SIN PERMISO");
+        this.snackBar.open("No tiene los privilegios para realizar está acción", "SIN PERMISO", {duration: 3000});
         console.log(error);
       }
     });
@@ -185,35 +187,28 @@ export class TouristPlaceEditComponent {
   }
 
   deleteImageIcon(): void {
-    Swal.fire({
-      title: '¿Estas seguro?',
-      text: "Se eliminará la imágen de la carátula de este recurso!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '250px',
+      data: {name: 'Nombre'}
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
       if (result.isConfirmed) {
         this.touristPlaceService.removeImageIcon(this.tpDto.uuid ?? '', this.tpDto.imageIcon ?? '').subscribe({
           next: data => {
             this.loadFormData(data);
-            Swal.fire(
-              '¡Eliminado!',
-              'La carátula fue eliminada.',
-              'success'
-            )
+            this.snackBar.open("La carátula fue eliminada.", "¡Eliminado!", {duration: 3000})
           },
           error: e => {
             if(e.status = 401)
-              this.toast.error("No tiene los privilegios para realizar está acción", "SIN PERMISO");
+              this.snackBar.open("No tiene los privilegios para realizar está acción", "SIN PERMISO", {duration: 3000})
             else 
-              this.toast.error("Algo salió mal, " + e.message, "ERROR");
-            console.log(e);
+              console.log(e);
           }
         });
       }
-    })
+    });
   }
 
 }

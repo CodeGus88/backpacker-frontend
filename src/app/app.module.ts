@@ -12,10 +12,8 @@ import { MenuComponent } from './components/menu/menu.component';
 
 // toast
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastrModule } from 'ngx-toastr';
 
 import { TouristPlaceComponent } from './pages/tourist-place/tourist-place-index/tourist-place.component';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { TouristPlaceViewComponent } from './pages/tourist-place/tourist-place-view/tourist-place-view.component';
 import { TouristPlaceCreateComponent } from './pages/tourist-place/tourist-place-create/tourist-place-create.component';
 import { TouristPlaceEditComponent } from './pages/tourist-place/tourist-place-edit/tourist-place-edit.component';
@@ -29,6 +27,9 @@ import { interceptorProvider } from './interceptors/auth-interceptor.interceptor
 import { RatingComponent } from './components/rating/rating.component';
 import { AddressComponent } from './components/address/address-manager/address.component';
 import { AddressReadOnlyComponent } from './components/address/address-read-only/address-read-only.component';
+import { SharedModule } from './shared/shared.module';
+import { ConfirmDialog } from './components/confirm-dialog.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 
 @NgModule({
@@ -46,7 +47,9 @@ import { AddressReadOnlyComponent } from './components/address/address-read-only
     ImageViewerComponent,
     RatingComponent,
     AddressComponent,
-    AddressReadOnlyComponent
+    AddressReadOnlyComponent,
+    ConfirmDialog,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -55,10 +58,9 @@ import { AddressReadOnlyComponent } from './components/address/address-read-only
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot(),
-    NgxPaginationModule,
     ImageCropperModule,
-    NgMultiSelectDropDownModule.forRoot()
+    NgMultiSelectDropDownModule.forRoot(),
+    SharedModule
     
   ],
   providers: [interceptorProvider],

@@ -1,3 +1,30 @@
+/* Angular material */
+mat-button-toggle-group{
+    height: 55px;
+}
+
+/* toolbar secundario */
+.secondary-toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+/* paginación */
+.paginator-select {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 2px;
+  width: 80px;
+  height: 40px;
+  font-size: 12px;
+}
+  
+.demo-paginator {
+  width: auto;
+}
+
+
+/* Bootstrap */
 .btn-pointer{
     cursor: pointer;
 }

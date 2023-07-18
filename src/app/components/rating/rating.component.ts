@@ -6,9 +6,12 @@ import { RatingService } from 'src/app/services/rating/rating.service';
 import { StartsArrayGenerator } from 'src/app/util/stars-array';
 import { TokenService } from 'src/app/auth/services/token.service';
 import { EROLE } from 'src/app/auth/enums/role.enum';
-import { ToastrService } from 'ngx-toastr';
-import Swal from 'sweetalert2';
 import { RatingItem } from 'src/app/dtos/rating/item.dto';
+// import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
+// import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from '../confirm-dialog.component';
 
 @Component({
   selector: 'app-rating',
@@ -32,7 +35,8 @@ export class RatingComponent extends StartsArrayGenerator {
   constructor(
     private ratingService: RatingService,
     private tokenService: TokenService,
-    private toast: ToastrService
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     super(5);
   }
@@ -101,11 +105,13 @@ export class RatingComponent extends StartsArrayGenerator {
       next: data => {
         console.log(data);
         this.onLoadRating();
-        this.toast.success("Se registro el voto", "ÉXITO");
+        // this.toast.success("Se registro el voto", "ÉXITO");
+        this.snackBar.open("Se registro el voto", "ÉXITO", {duration: 3000});
       },
       error: error => {
         console.log(error);
-        this.toast.error(error.error.message, "ERROR " + error.status);
+        // this.toast.error(error.error.message, "ERROR " + error.status);
+        this.snackBar.open(error.error.message, "ERROR " + error.status, {duration: 3000});
       }
     });
   }
@@ -133,42 +139,46 @@ export class RatingComponent extends StartsArrayGenerator {
       next: data => {
         console.log(data);
         this.onLoadRating();
-        this.toast.success("Se guardaron los cambios", "EDITADO");
+        // this.toast.success("Se guardaron los cambios", "EDITADO");
+        this.snackBar.open("Se guardaron los cambios", "EDITADO", {duration: 3000});
       },
       error: error => {
         console.log(error);
-        this.toast.error(error.message, "ERROR");
+        // this.toast.error(error.message, "ERROR");
+        this.snackBar.open(error.message, "ERROR", {duration: 3000});
       }
     });
   }
 
   deleteByUuid(uuid: string) {
-    Swal.fire({
-      title: 'CONFIRMACIÓN',
-      text: "¿Estás seguro de eliminar este voto?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, ¡Eliminar esto!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '250px',
+      data: {name: 'Nombre'}
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         this.ratingService.deleteByUuid(this.eRating!, uuid).subscribe({
           next: data => {
             if (data) {
               this.onLoadRating();
               this.editableItemUuid = undefined;
-              this.toast.success("Se eliminó correctamente", "ÉXITO")
+              // this.toast.success("Se eliminó correctamente", "ÉXITO")
+              this.snackBar.open("Se eliminó correctamente", "ÉXITO", {duration: 3000});
             } else
-              this.toast.error("Algo salió, no se pudo eliminar este recurso", "FALLÓ");
+              // this.toast.error("Algo salió, no se pudo eliminar este recurso", "FALLÓ");
+              this.snackBar.open("Algo salió, no se pudo eliminar este recurso", "FALLÓ", {duration: 3000});
           },
           error: e => {
-            this.toast.error(e.message, "ERROR");
+            // this.toast.error(e.message, "ERROR");
+            this.snackBar.open(e.message, "ERROR", {duration: 3000});
           }
         });
       }
     });
+    
+      
   }
 
 }
