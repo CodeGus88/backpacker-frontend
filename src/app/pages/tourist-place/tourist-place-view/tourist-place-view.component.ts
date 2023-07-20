@@ -11,6 +11,7 @@ import { ERating } from 'src/app/enums/rating.enum';
 import { AddressDto } from 'src/app/dtos/address/address.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from 'src/app/components/confirm-dialog.component';
+import Style from 'ol/style/Style';
 
 @Component({
   selector: 'app-tourist-place-view',
@@ -77,29 +78,23 @@ export class TouristPlaceViewComponent {
   deleteByUuid(uuid: String = '') {
     if (!uuid)
       return;
-
-      const dialogRef = this.dialog.open(ConfirmDialog, {
-        width: '250px',
-        data: {name: 'Nombre'}
-      });
-    
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.isConfirmed) {
-          this.touristPlaceService.deleteByUuid(uuid).subscribe(
-            {next: data =>{
-              if(data){
-                this.snackBar.open("Se eliminó correctamente.", "¡Eliminado!", {duration: 3000})
-                window.history.back();
-                
-              } else
-                this.snackBar.open("No se pudo eliminar el recurso", "RECHAZADO", {duration: 3000})
-            },
-            error: e => {
-              this.snackBar.open(e.message, "ERROR", {duration: 3000})
-            }
-          });
-        }
-      });
+    const dialogRefx = this.dialog.open(ConfirmDialog);
+    dialogRefx.afterClosed().subscribe(result => {
+      if (result) {
+        this.touristPlaceService.deleteByUuid(uuid).subscribe({
+          next: data =>{
+            if(data){
+              this.snackBar.open("Se eliminó correctamente.", "¡Eliminado!", {duration: 3000})
+              window.history.back();
+            } else
+              this.snackBar.open("No se pudo eliminar el recurso", "RECHAZADO", {duration: 3000})
+          },
+          error: e => {
+            this.snackBar.open(e.message, "ERROR", {duration: 3000})
+          }
+        });
+      }
+    });
   }
 
   format(text: String = ''): String{
@@ -119,7 +114,7 @@ export class TouristPlaceViewComponent {
       file = new FileDto();
       file.file = this.tpDto.imageIcon?.toString();
       file.entityUuid = this.tpDto.uuid?.toString();
-      this.snackBar.open("Caráatula del recurso", "CARÁTULA", {duration: 3000});
+      this.snackBar.open("Carátula del recurso", "CARÁTULA", {duration: 2000});
     }
     this.clickedImg = file;
   }

@@ -150,7 +150,9 @@ export class TouristPlaceEditComponent {
       },
       error: error => {
         if(error.status = 401)
-        this.snackBar.open("No tiene los privilegios para realizar está acción", "SIN PERMISO", {duration: 3000});
+          this.snackBar.open("No tiene los privilegios para realizar está acción", "SIN PERMISO", {duration: 3000});
+        else
+        this.snackBar.open("Algo salió mal", "ERROR", {duration: 3000});
         console.log(error);
       }
     });

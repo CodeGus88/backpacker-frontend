@@ -1,27 +1,42 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Input } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'confirm-dialog',
   template: `
-    <h1 mat-dialog-title>Diálogo de Confirmación</h1>
+    <h1 mat-dialog-title>{{title??'CONFIRM'}}</h1>
     <div mat-dialog-content>
-      <p>¿Estás seguro de que quieres hacer esto?</p>
+      <p>{{content??'Continue?'}}</p>
     </div>
     <div mat-dialog-actions>
-      <button mat-button (click)="onNoClick()">No</button>
-      <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Sí</button>
+      <button mat-button (click)="cancel()">{{cancelButtonText??'Cancel'}}</button>
+      <button mat-button (click)="accept()" color="warn" [mat-dialog-close]="true" cdkFocusInitial>{{acceptButtonText??'yes'}}</button>
     </div>
   `,
+  styles: [`
+    /* confirm dialog */
+    .confirm-dialog .mat-dialog-container{
+        z-index: 10000;
+    }
+  `]
 })
 export class ConfirmDialog {
 
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {}
+  @Input() title: string | undefined;
+  @Input() content: string | undefined;
+  @Input() acceptButtonText: string | undefined;
+  @Input() cancelButtonText: string | undefined;
 
-  onNoClick(): void {
-    this.dialogRef.close();
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmDialog>
+  ) {}
+
+  cancel() {
+    this.dialogRef.close(false);
+  }
+
+  accept() {
+    this.dialogRef.close(true);
   }
 
 }

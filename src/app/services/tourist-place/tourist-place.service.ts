@@ -7,6 +7,7 @@ import { TouristPlaceItem } from '../../dtos/touristplace/item.dto';
 import { PaginableDataInput } from 'src/app/dtos/paginable-data-input.dto';
 import { Request } from 'src/app/dtos/touristplace/request.dto';
 import { TouristPlaceDto } from 'src/app/dtos/touristplace/tourist-place.dto';
+import { FormControl } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,8 @@ export class TouristPlaceService {
     return this.http.delete<boolean>(`${environment.apiUrl}/tourist-places/${uuid}`).pipe();
   }
 
-  create(request: Request): Observable<TouristPlaceDto> {
+  // create(request: Request): Observable<TouristPlaceDto> {
+  create(request: any): Observable<TouristPlaceDto> {
     return this.http.post<TouristPlaceDto>(`${environment.apiUrl}/tourist-places/create`, request);
   }
 

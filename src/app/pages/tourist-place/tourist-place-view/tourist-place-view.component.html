@@ -54,7 +54,13 @@
               <div class="text-center">
                 <button type="button" class="btn btn-light category-button me-1"
                   (click)="showInfo(category.description, category.name)"
-                  *ngFor="let category of tpDto.categories">{{category.name}}</button>
+                  *ngFor="let category of tpDto.categories"
+                  #tooltip="matTooltip"
+                  matTooltip="{{category.description}}"
+                  matTooltipPosition="below"
+                  matTooltipHideDelay="200"
+                  aria-label="Button that displays a tooltip that hides when scrolled out of the container"
+                  >{{category.name}}</button>
               </div>
               <div class="container in-line mb-5">
                 <p class="text-center mt-2">
@@ -109,3 +115,7 @@
   (changeListEvent)="changeListEvent($event)"></app-galery>
 
 <app-image-viewer [file]="clickedImg" [eEntity]="eEntity"></app-image-viewer>
+
+
+
+

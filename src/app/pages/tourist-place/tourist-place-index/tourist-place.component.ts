@@ -1,8 +1,7 @@
-import { Component, Pipe } from '@angular/core';
+import { Component } from '@angular/core';
 import { Paginate } from 'src/app/dtos/paginable.dto';
 import { TouristPlaceItem } from 'src/app/dtos/touristplace/item.dto';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
-// import { ToastrService } from 'ngx-toastr';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, debounceTime, fromEvent, map } from 'rxjs';
 import { PaginableDataInput } from 'src/app/dtos/paginable-data-input.dto';

@@ -59,7 +59,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     ImageCropperModule,
-    NgMultiSelectDropDownModule.forRoot(),
+    // NgMultiSelectDropDownModule.forRoot(),
     SharedModule
     
   ],

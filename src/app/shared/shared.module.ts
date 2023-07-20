@@ -13,6 +13,8 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 const libs = [
   CommonModule,
@@ -27,8 +29,9 @@ const libs = [
   MatInputModule,
   MatSelectModule,
   MatButtonToggleModule,
-  MatPaginatorModule
-  
+  MatPaginatorModule,
+  MatCheckboxModule,
+  MatTooltipModule
 ]
 
 @NgModule({

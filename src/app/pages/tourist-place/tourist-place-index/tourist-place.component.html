@@ -1,102 +1,101 @@
-<mat-card>
+<mat-toolbar color="primary" class="m-0">
+    <mat-toolbar-row>
+        <span class="app-title">Lugares turísticos</span>
+        <span class="secondary-toolbar-spacer"></span>
+        <button mat-icon-button aria-label="Add" (click)="redirectTo('touristplaces/create')">
+            <mat-icon>add_circle</mat-icon>
+        </button>
+    </mat-toolbar-row>
+</mat-toolbar>
 
-    <mat-card-header class="p-0">
-        <mat-toolbar color="primary" class="m-0">
-            <mat-toolbar-row>
-                <span class="app-title">Lugares turísticos</span>
-                <span class="secondary-toolbar-spacer"></span>
-                <button mat-icon-button aria-label="Add" (click)="redirectTo('touristplaces/create')">
-                    <mat-icon>add_circle</mat-icon>
-                </button>
-            </mat-toolbar-row>
-        </mat-toolbar>
-    </mat-card-header>
+<div class="container mt-3 mb-5">
+    <mat-card>
+        <mat-card-header class="row me-1">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="row">
+                    <mat-form-field class="col-12">
+                        <mat-label>Búsqueda</mat-label>
+                        <input matInput placeholder="Ingresa un texto para buscar" id="search">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="row">
+                    <mat-form-field class="col-lg-8 col-md-8 col-sm-7">
+                        <mat-label>Orden</mat-label>
+                        <mat-select (selectionChange)="onLoadData()" [(ngModel)]="paginate.sort">
+                            <mat-option *ngFor="let option of options" [value]="option.value">
+                                {{option.viewValue}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div class="col-lg-4 col-md-4 col-sm-5">
+                        <mat-button-toggle-group [(ngModel)]="paginate.ascDesc" (change)="onLoadData()">
+                            <mat-button-toggle [value]="ASC" class="col-6"><i
+                                    class="material-icons">keyboard_double_arrow_up</i></mat-button-toggle>
+                            <mat-button-toggle [value]="DESC" class="col-6"><i
+                                    class="material-icons">keyboard_double_arrow_down</i></mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                </div>
+            </div>
+        </mat-card-header>
 
-    <mat-card-content class="p-0">
-        <div class="container mt-3">
-            <mat-card>
-                <mat-card-header class="row me-1">
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="row">
-                            <mat-form-field class="col-12">
-                                <mat-label>Búsqueda</mat-label>
-                                <input matInput placeholder="Ingresa un texto para buscar" id="search">
-                            </mat-form-field>
+        <mat-card-content>
+
+            <div class="row m-auto justify-content-between">
+                <mat-card class="card-item p-0 mb-3" *ngFor="let item of list">
+                    <mat-card-header>
+                        <mat-card-title>{{item.name}}</mat-card-title>
+                        <mat-card-subtitle class="mb-2">Puntuación: {{item.rating??0}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <div class="img-text-container">
+                        <img mat-card-image [src]="getImageUrl(item.uuid, item.imageIcon)"
+                            onerror="this.src= 'assets/images/default-image.jpg'" alt="ImageIcon"
+                            alt="Photo of a Shiba Inu" class="card-img-top">
+                        <div class="cover-text-right me-1">
+                            <div *ngFor="let category of getCategoryList(item.categories)">{{category}}</div>
+                        </div>
+                        <div class="cover-text-left ms-1 d-flex">
+                            <i class="material-icons"
+                            #tooltip="matTooltip"
+                            matTooltip="{{item.resume}}"
+                            matTooltipPosition="below"
+                            matTooltipHideDelay="500"
+                            aria-label="Button that displays a tooltip that hides when scrolled out of the container"
+                            >public</i>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="row">
-                            <mat-form-field class="col-lg-8 col-md-8 col-sm-7">
-                                <mat-label>Orden</mat-label>
-                                <mat-select (selectionChange)="onLoadData()" [(ngModel)]="paginate.sort">
-                                    <mat-option *ngFor="let option of options" [value]="option.value">
-                                        {{option.viewValue}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                            <div class="col-lg-4 col-md-4 col-sm-5">
-                                <mat-button-toggle-group [(ngModel)]="paginate.ascDesc" (change)="onLoadData()">
-                                    <mat-button-toggle [value]="ASC" class="col-6"><i
-                                            class="material-icons">keyboard_double_arrow_up</i></mat-button-toggle>
-                                    <mat-button-toggle [value]="DESC" class="col-6"><i
-                                            class="material-icons">keyboard_double_arrow_down</i></mat-button-toggle>
-                                </mat-button-toggle-group>
-                            </div>
+                    <mat-card-content>
+                        <div class="card-body">
+                            <p 
+                            class="card-text fw-lighter text-justify resume-resume mt-3"
+                            >{{item.resume}}</p>
                         </div>
-                    </div>
-                </mat-card-header>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-button (click)="redirectTo('touristplaces/'+item.uuid)">VER</button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </mat-card-content>
 
-                <mat-card-content>
-
-                    <div class="row p-3 justify-content-between">
-                        <mat-card class="card-item p-0 mb-3" *ngFor="let item of list">
-                            <mat-card-header>
-                                <mat-card-title>{{item.name}}</mat-card-title>
-                                <mat-card-subtitle class="mb-2">Puntuación: {{item.rating??0}}</mat-card-subtitle>
-                            </mat-card-header>
-                            <div class="img-text-container">
-                                <img mat-card-image [src]="getImageUrl(item.uuid, item.imageIcon)"
-                                    onerror="this.src= 'assets/images/default-image.jpg'" alt="ImageIcon"
-                                    alt="Photo of a Shiba Inu" class="card-img-top">
-                                <div class="cover-text-right me-1">
-                                    <div *ngFor="let category of getCategoryList(item.categories)">{{category}}</div>
-                                </div>
-                                <div class="cover-text-left ms-1 d-flex">
-                                    <i class="material-icons">public</i>
-                                </div>
-                            </div>
-                            <mat-card-content>
-                                <div class="card-body">
-                                    <p class="card-text fw-lighter text-justify resume-resume mt-3">{{item.resume}}</p>
-                                </div>
-                            </mat-card-content>
-                            <mat-card-actions>
-                                <button mat-button (click)="redirectTo('touristplaces/'+item.uuid)">VER</button>
-                            </mat-card-actions>
-                        </mat-card>
-                    </div>
-                </mat-card-content>
-
-                <mat-card-actions>
-                    <div class="container d-flex align-items-center">
-                        <div class="ms-auto" >
-                            <label for="pageSelect" class="me-2"><small>Página:</small></label>
-                            <select [(ngModel)]="paginate.page" id="pageSelect" (change)="goToPageNumber()"
-                                class="paginator-select">
-                                <option [value]="i" *ngFor="let page of getPagesList(); let i = index" class="p-3 m-3">
-                                    {{page}}</option>
-                            </select>
-                        </div>
-                        <mat-paginator #paginator class="demo-paginator me-auto" (page)="pageChanged($event)"
-                            [length]="paginate.totalElements" [pageSize]="paginate.size" [disabled]="false"
-                            [showFirstLastButtons]="true" [pageSizeOptions]="[2, 8, 16, 32, 64]" [hidePageSize]="false"
-                            [pageIndex]="paginate.page" aria-label="Select page">
-                        </mat-paginator>
-                    </div>
-                </mat-card-actions>
-            </mat-card>
-        </div>
-    </mat-card-content>
-
-    <!-- <mat-card-footer class="p-0">Todos los derechos reservados</mat-card-footer> -->
-</mat-card>
+        <mat-card-actions>
+            <div class="container d-flex align-items-center">
+                <div class="ms-auto">
+                    <label for="pageSelect" class="me-2"><small>Página:</small></label>
+                    <select [(ngModel)]="paginate.page" id="pageSelect" (change)="goToPageNumber()"
+                        class="paginator-select">
+                        <option [value]="i" *ngFor="let page of getPagesList(); let i = index" class="p-3 m-3">
+                            {{page}}</option>
+                    </select>
+                </div>
+                <mat-paginator #paginator class="demo-paginator me-auto" (page)="pageChanged($event)"
+                    [length]="paginate.totalElements" [pageSize]="paginate.size" [disabled]="false"
+                    [showFirstLastButtons]="true" [pageSizeOptions]="[2, 8, 16, 32, 64]" [hidePageSize]="false"
+                    [pageIndex]="paginate.page" aria-label="Select page">
+                </mat-paginator>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+</div>

@@ -5,9 +5,7 @@ import { EEntity } from 'src/app/enums/e-entity.enum';
 import { EModule } from 'src/app/enums/e-module.enum';
 import { GaleryService } from 'src/app/services/galery/galery.service';
 import { environment } from 'src/environments/environment';
-// import { ToastrService } from 'ngx-toastr';
 import { MatSnackBar } from '@angular/material/snack-bar';
-// import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from '../confirm-dialog.component';
 
@@ -122,32 +120,12 @@ export class GaleryComponent {
   }
 
   confirmForDelete(uuid: string) {
-
-    const dialogRef = this.dialog.open(ConfirmDialog, {
-      width: '250px',
-      data: {name: 'Nombre'}
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
+    const dialogRefx = this.dialog.open(ConfirmDialog);
+    dialogRefx.afterClosed().subscribe(result => {
       if (result) {
         this.delete(uuid);
       }
     });
-
-
-    // Swal.fire({
-    //   title: 'CONFIRMACIÓN',
-    //   text: "¿Estas seguro de eliminar esta imagen?",
-    //   icon: 'warning',
-    //   showCancelButton: true,
-    //   confirmButtonColor: '#3085d6',
-    //   cancelButtonColor: '#d33',
-    //   confirmButtonText: 'Sí, ¡eliminar ahora!'
-    // }).then((result) => {
-    //   if (result.isConfirmed) {
-    //     this.delete(uuid)
-    //   }
-    // })
   }
 
   delete(uuid: string) {
@@ -159,7 +137,7 @@ export class GaleryComponent {
           this.snackBar.open("Se eliminó con éxito", "ÉXITO", {duration: 3000});
         } else
           // this.toast.error("No se pudo eliminar", "FALLÓ");
-          this.snackBar.open("No se pudo eliminar", "FALLÓ", {duration: 3000});
+          this.snackBar.open("Algo salió mal", "FALLÓ", {duration: 3000});
       },
       error: error => {
         // this.toast.error(error.message, "ERROR");
