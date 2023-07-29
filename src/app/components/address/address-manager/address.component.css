@@ -3,3 +3,13 @@
   height: 500px;
 }
 
+.containerx {
+  position: relative;
+}
+
+.input-seeker {
+  position: absolute;
+  top: 2%;
+  right: 1%;
+  width: 80%;
+}

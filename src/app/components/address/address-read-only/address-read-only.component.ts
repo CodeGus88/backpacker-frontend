@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AddressDto } from 'src/app/dtos/address/address.dto';
 
 // Map
@@ -27,6 +27,7 @@ export class AddressReadOnlyComponent {
   // map
   private map: Map | undefined;
   private markerSource: VectorSource | undefined;
+  protected panelOpenState: boolean = false;
 
   constructor() {
     
@@ -74,12 +75,10 @@ export class AddressReadOnlyComponent {
 
   addMarkers(): void {
     this.addresses?.forEach(item => {
-      // console.log(":(", item)
       let marker = new Feature({
         geometry: new Point(fromLonLat([item.lng, item.lat]))
       });
       this.markerSource!.addFeature(marker);
-      
       // Crear un elemento HTML para mostrar el título del marcador
       let titleElement = document.createElement('div');
       titleElement.innerHTML = `<small>${item.title}</small>`;

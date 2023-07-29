@@ -11,7 +11,6 @@ import { EOrder } from 'src/app/enums/e.order.enum';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { PageEvent } from '@angular/material/paginator';
 
-
 @Component({
   selector: 'app-list',
   templateUrl: './tourist-place.component.html',
@@ -102,9 +101,9 @@ export class TouristPlaceComponent {
 
   protected getImageUrl(parentUuid?: String, imageIcon?: String): String {
     if (imageIcon)
-      return `${environment.mediaPartialUrl}/${EEntity.TOURIST_PLACE_FILES.toLowerCase()}/${parentUuid}/${imageIcon}`;
+      return `${environment.mediaPartialUrl}/${EEntity.TOURIST_PLACE_FILES}/${parentUuid}/${imageIcon}`;
     else
-      return `${environment.mediaPartialUrl}/${EEntity.TOURIST_PLACE_FILES.toLowerCase()}/defaultImageIcon.png`;
+      return `${environment.mediaPartialUrl}/${EEntity.TOURIST_PLACE_FILES}/defaultImageIcon.png`;
   }
 
   getCategoryList(categories: String = ""): string[] {

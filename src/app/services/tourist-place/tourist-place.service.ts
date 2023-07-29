@@ -44,7 +44,8 @@ export class TouristPlaceService {
     return this.http.post<TouristPlaceDto>(`${environment.apiUrl}/tourist-places/create`, request);
   }
 
-  update(uuid?: String, request?: Request): Observable<TouristPlaceDto> {
+  // update(uuid?: String, request?: Request): Observable<TouristPlaceDto> {
+  update(uuid?: String, request?: any): Observable<TouristPlaceDto> {
     return this.http.put<TouristPlaceDto>(`${environment.apiUrl}/tourist-places/update/${uuid}`, request);
   }
 

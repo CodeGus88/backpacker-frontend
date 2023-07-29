@@ -5,7 +5,6 @@ import { RatingDto } from 'src/app/dtos/rating/rating.dto';
 import { Observable } from 'rxjs';
 import { ERating } from 'src/app/enums/rating.enum';
 import { RatingItem } from 'src/app/dtos/rating/item.dto';
-import { RatingRequest } from '../../dtos/rating/request.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +23,12 @@ export class RatingService extends BaseService {
     return this.http.get<RatingItem>(`${this.apiUrl}/${eRating}/this-auth-user/${entityUuid}`);
   }
 
-  public create(eRating: ERating, request: RatingRequest): Observable<RatingItem>{
+  public create(eRating: ERating, request: FormData): Observable<RatingItem>{
+    // public create(eRating: ERating, request: RatingRequest): Observable<RatingItem>{
     return this.http.post<RatingItem>(`${this.apiUrl}/${eRating}`, request);
   }
 
-  public update(eRating: ERating, uuid: string, request: RatingRequest): Observable<RatingItem>{
+  public update(eRating: ERating, uuid: string, request: FormData): Observable<RatingItem>{
     return this.http.put<RatingItem>(`${this.apiUrl}/${eRating}/${uuid}`, request);
   }
 

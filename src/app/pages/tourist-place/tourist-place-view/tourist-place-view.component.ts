@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
 import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,7 +11,8 @@ import { ERating } from 'src/app/enums/rating.enum';
 import { AddressDto } from 'src/app/dtos/address/address.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from 'src/app/components/confirm-dialog.component';
-import Style from 'ol/style/Style';
+import { FileGalery, FileRef } from 'src/app/dtos/gallery/file-galery';
+import { GalleryComponent } from 'src/app/components/gallery/gallery.component';
 
 @Component({
   selector: 'app-tourist-place-view',
@@ -31,6 +32,9 @@ export class TouristPlaceViewComponent {
   // for child image-viewer
   protected clickedImg?: FileDto;
 
+  protected fileGalery: FileGalery | undefined;
+  
+
   // for rating child
   protected eRating = ERating.TOURIST_PLACES_RATING;
 
@@ -38,7 +42,8 @@ export class TouristPlaceViewComponent {
     private route: ActivatedRoute, 
     private touristPlaceService: TouristPlaceService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ){
     this.uuid = this.route.snapshot.params['uuid'];
     this.tpDto = new TouristPlaceDto();
@@ -53,6 +58,7 @@ export class TouristPlaceViewComponent {
       next: data => {
         console.log("data", data);
         this.tpDto = data;
+        this.loadUrlImages();
       },
       error: e => {
         console.log(e);
@@ -60,7 +66,7 @@ export class TouristPlaceViewComponent {
     });
   }
   
-  ngBack(){
+  backHistory(){
     window.history.back();
   }
 
@@ -78,31 +84,34 @@ export class TouristPlaceViewComponent {
   deleteByUuid(uuid: String = '') {
     if (!uuid)
       return;
-    const dialogRefx = this.dialog.open(ConfirmDialog);
-    dialogRefx.afterClosed().subscribe(result => {
-      if (result) {
-        this.touristPlaceService.deleteByUuid(uuid).subscribe({
-          next: data =>{
-            if(data){
-              this.snackBar.open("Se eliminó correctamente.", "¡Eliminado!", {duration: 3000})
-              window.history.back();
-            } else
-              this.snackBar.open("No se pudo eliminar el recurso", "RECHAZADO", {duration: 3000})
-          },
-          error: e => {
-            this.snackBar.open(e.message, "ERROR", {duration: 3000})
-          }
-        });
+    const dialogRefx = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'CONFIRMACIÓN',
+        content: `¿Estás seguro de eliminar el lugar turístico ${uuid}?`
+      }
+    });
+    dialogRefx.afterClosed().subscribe({
+      next: result => {
+          if (result) {
+            this.touristPlaceService.deleteByUuid(uuid).subscribe({
+              next: data =>{
+                if(data){
+                  this.snackBar.open("Se eliminó correctamente.", "¡Eliminado!", {duration: 3000})
+                  window.history.back();
+                } else
+                  this.snackBar.open("No se pudo eliminar el recurso", "RECHAZADO", {duration: 3000})
+              },
+              error: e => {
+                this.snackBar.open(e.message, "ERROR", {duration: 3000})
+              }
+            });
+        }
       }
     });
   }
 
   format(text: String = ''): String{
     return text.replaceAll('\n', '<br>');
-  }
-
-  showInfo(text: String = "none", title: String = "title"): void{
-    this.snackBar.open(text.toString(), title.toString().toUpperCase(), {duration: 15000});
   }
 
   changeListEvent($files: FileDto[]) {
@@ -129,6 +138,41 @@ export class TouristPlaceViewComponent {
 
   getGoogleEarth(addressDto: AddressDto): string{
     return `https://earth.google.com/web/@${addressDto.lat},${addressDto.lng}`;
+  }
+
+  loadUrlImages(): void{
+    let urlList: FileRef [] = [];
+    this.tpDto.files.forEach(element => {
+      if(element.file)
+        urlList.push({
+          uuid: element.uuid!,
+          url: this.getImageUrl(element.file)
+        });
+      else
+        urlList.push({
+          uuid: element.uuid!,
+          url: this.getDefaultImgUrl()
+        });
+    });
+    this.fileGalery = {
+      eModule: EModule.TOURIST_PLACES,
+      eEntity: EEntity.TOURIST_PLACE_FILES,
+      entityUuid: this.uuid,
+      urlList: urlList,
+      writePermission: true
+    };
+  }
+
+  openGallery(){
+    this.dialog.open(GalleryComponent, {
+      data: this.fileGalery,
+      width: '100%',
+      height: 'auto'
+    });
+  }
+
+  redirectToEdit(){
+    this.router.navigate([`/touristplaces/edit/${this.tpDto.uuid}`]);
   }
 
 }

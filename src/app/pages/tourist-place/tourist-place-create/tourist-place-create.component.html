@@ -1,6 +1,9 @@
 <mat-toolbar color="primary" class="m-0">
     <mat-toolbar-row>
-        <span class="app-title">{{title}}</span>
+        <button mat-icon-button (click)="backHistory()" class="me-3">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="secondary-toolbar-title">{{title}}</span>
     </mat-toolbar-row>
 </mat-toolbar>
 
@@ -8,8 +11,8 @@
     <mat-card>
         <mat-card-content>
             <form class="form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div class="row mb-3">
-                    <div class="col-sm-12 col-md-6">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 mb-2">
                         <mat-form-field class="full-width">
                             <mat-label>Nombre {{form.get('name')!.value!.length}}/35</mat-label>
                             <input matInput placeholder="Nombre del lugar" formControlName="name" required
@@ -17,7 +20,7 @@
                             <mat-error>Min 2, Max 35</mat-error>
                         </mat-form-field>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-6 mb-2">
                         <mat-form-field class="full-width">
                             <mat-label>Categorías {{getLength()}}/3</mat-label>
                             <mat-select formControlName="categories" multiple>
@@ -30,6 +33,7 @@
                                         #tooltip="matTooltip"
                                         matTooltip="{{category.description}}"
                                         matTooltipPosition="below"
+                                        matTooltipShowDelay="1000"
                                         matTooltipHideDelay="200"
                                         aria-label="Button that displays a tooltip that hides when scrolled out of the container"
                                     >
@@ -41,31 +45,31 @@
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="mb-3">
+                <div class="mb-2">
                     <mat-form-field class="full-width">
                         <mat-label>Resumen {{form.get('resume')!.value!.length}}/500</mat-label>
-                        <input matInput placeholder="pat@example.com" formControlName="resume" required maxlength="255"
+                        <input matInput placeholder="Resumen" formControlName="resume" required maxlength="255"
                             autocomplete="off" />
                         <mat-error>Min 10, Max 500</mat-error>
                     </mat-form-field>
                 </div>
-                <div class="mb-3">
+                <div class="mb-2">
                     <mat-form-field class="full-width">
                         <mat-label>Palabras clave {{form.get('keywords')!.value!.length}}/50</mat-label>
-                        <input matInput placeholder="pat@example.com" formControlName="keywords" required maxlength="50"
+                        <input matInput placeholder="Palabras clave" formControlName="keywords" required maxlength="50"
                             autocomplete="off" />
                         <mat-error>Min 1, Max 50</mat-error>
                     </mat-form-field>
                 </div>
-                <div class="mb-3">
+                <div class="mb-2">
                     <mat-form-field class="full-width">
                         <mat-label>Descripción {{form.get('description')!.value!.length}}/10000</mat-label>
-                        <textarea matInput placeholder="Ex. It makes me feel..." formControlName="description"
+                        <textarea matInput placeholder="Descripción" formControlName="description"
                             autocomplete="off" rows="5" minlength="10" maxlength="10000"></textarea>
                         <mat-error>Min 10, Max 10000</mat-error>
                     </mat-form-field>
                 </div>
-                <div class="mb-3">
+                <div class="mb-2">
                     <mat-checkbox formControlName="isPublic">
                         <div class="vertical-center">
                             Público
@@ -74,8 +78,8 @@
                         </div>
                     </mat-checkbox>
                 </div>
-                <div class="mb-3">
-                    <button mat-raised-button (click)="ngBack()" type="button">Cancelar</button>
+                <div class="mb-2">
+                    <button mat-raised-button (click)="backHistory()" type="button">Cancelar</button>
                     <button mat-raised-button color="primary" class="ms-2" type="submit"
                         [disabled]="form.invalid">Crear</button>
                 </div>

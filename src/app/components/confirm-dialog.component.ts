@@ -1,34 +1,30 @@
-import { Component, Input } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, Input } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'confirm-dialog',
   template: `
-    <h1 mat-dialog-title>{{title??'CONFIRM'}}</h1>
+    <h1 mat-dialog-title>{{data.title??'CONFIRM'}}</h1>
     <div mat-dialog-content>
-      <p>{{content??'Continue?'}}</p>
+      <p>{{data.content??'Continue?'}}</p>
     </div>
     <div mat-dialog-actions>
-      <button mat-button (click)="cancel()">{{cancelButtonText??'Cancel'}}</button>
-      <button mat-button (click)="accept()" color="warn" [mat-dialog-close]="true" cdkFocusInitial>{{acceptButtonText??'yes'}}</button>
+      <button mat-button (click)="cancel()">{{data.btnCancel??'Cancel'}}</button>
+      <button mat-button (click)="accept()" color="warn" [mat-dialog-close]="true" cdkFocusInitial>{{data.btnAcept??'yes'}}</button>
     </div>
   `,
-  styles: [`
-    /* confirm dialog */
-    .confirm-dialog .mat-dialog-container{
-        z-index: 10000;
-    }
-  `]
+  // styles: [`
+  //   /* confirm dialog */
+  //   .confirm-dialog .mat-dialog-container{
+  //       z-index: 10000;
+  //   }
+  // `]
 })
 export class ConfirmDialog {
 
-  @Input() title: string | undefined;
-  @Input() content: string | undefined;
-  @Input() acceptButtonText: string | undefined;
-  @Input() cancelButtonText: string | undefined;
-
   constructor(
-    public dialogRef: MatDialogRef<ConfirmDialog>
+    public dialogRef: MatDialogRef<ConfirmDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   cancel() {

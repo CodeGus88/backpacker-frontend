@@ -1,75 +1,83 @@
-<div class="modal fade" id="modalx" #modalx tabindex="-1" aria-hidden="true" aria-labelledby="title">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="title" *ngIf="editableFlag; else titleNew">Editar</h5>
-                <ng-template #titleNew>
-                    <h5 class="modal-title" id="title">Nuevo</h5>
-                </ng-template>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div *ngIf="(addresses??[]).length > 0; else none">
+    <div class="bg-light bg-gradient mb-3 rounded ps-2 pe-2 align-items-center" *ngFor="let item of addresses">
+        <div class="row align-items-center">
+            <div class="col-10">
+                <small class="text-break fw-semibold me-1">{{item.title}}:</small>
+                <small class="fw-light">
+                    {{item.continent}}, {{item.country}},
+                    {{item.state}}, {{item.county}}:
+                    {{item.address}}
+                </small>
             </div>
-            <div class="modal-body">
-                <div class="container p-0 border-1 rounded" id="form">
-                    <div class="mt-3">
-                        <div class="mb-3" *ngIf="editableFlag">
-                            <label for="uuid" class="form-label">UUID</label>
-                            <input type="text" class="form-control" disabled="true" id="uuid" aria-describedby="uuid"
-                                [(ngModel)]="editableUuid">
-                        </div>
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Título</label>
-                            <input type="text" class="form-control" id="title" aria-describedby="title"
-                                [(ngModel)]="request.title" maxlength="30" required="true">
-                            <div id="titleEsp" class="form-text">
-                                Requerido {{request.title?request.title.length:0}}/30
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Dirección</label>
-                            <input type="text" class="form-control" id="address" aria-describedby="address"
-                                name="address" [(ngModel)]="request.address" (keyup.enter)="search()" maxlength="100"
-                                required="true">
-                            <div id="addressEsp" class="form-text">Requerido
-                                {{request.address?request.address.length:0}}/100</div>
-                        </div>
-                    </div>
-                    <!-- Map -->
-                    <div id="editorMap" class="map"></div>
-                    
+            <div class="col-2">
+                <div class="container text-end">
+                    <button mat-icon-button aria-label="Example icon button with a heart icon" data-bs-toggle="modal"
+                        data-bs-target="#modalx" (click)="editOrCreateTrigger(item)" class="m-0">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button aria-label="Example icon button with a heart icon"
+                        (click)="deleteByUuid(item.uuid)" class="m-0">
+                        <mat-icon>delete</mat-icon>
+                    </button>
                 </div>
-            </div>
-            <div class="modal-footer mt-2">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" #btnClose>Close</button>
-                <button type="button" class="btn btn-success ms-1" *ngIf="editableFlag; else btnNew"
-                    (click)="save(eVerb.UPDATE)">Actualizar</button>
-                <ng-template #btnNew>
-                    <button type="button" class="btn btn-success ms-1" (click)="save(eVerb.CREATE)">Registrar</button>
-                </ng-template>
             </div>
         </div>
     </div>
 </div>
-<div class="mt-3">
-    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalx">
-        <i class="fa-solid fa-circle-plus"></i> Nuevo</button>
-    <div class="bg-light bg-gradient mt-1 rounded" *ngFor="let item of addresses">
-        <small class="text-break fw-semibold me-1">{{item.title}}:</small>
-        <small class="fw-light">
-            {{item.continent}}, {{item.country}},
-            {{item.state}}, {{item.county}}:
-            {{item.address}}
-        </small>
-        <div class="container-fluid" style="display:inline">
-            <button class="btn btn-sm btn-outline-secondary"
-                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .50rem;"
-                data-bs-toggle="modal" data-bs-target="#modalx" (click)="editOrCreateTrigger(item)">
-                <i class="fa-solid fa-pen"></i>
-            </button>
-            <button class="ms-1 btn btn-sm btn-outline-secondary"
-                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .50rem;"
-                (click)="deleteByEntityUuid(item.uuid)">
-                <i class="fa-solid fa-trash"></i>
-            </button>
+<ng-template #none>
+    <p class="mb-3">Ninguna dirección...</p>
+</ng-template>
+
+<button mat-raised-button data-bs-toggle="modal" data-bs-target="#modalx" (click)="getLocation()">Nueva dirección</button>
+
+<div class="modal fade" id="modalx" #modalx tabindex="-1" aria-hidden="true" aria-labelledby="title">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="row align-items-center ps-3 pt-2 pb-2 pe-3 justify-content-between">
+                <h2 mat-dialog-title class="col-4 m-0" *ngIf="editableFlag; else titleNew">Editar</h2>
+                <small class="col-8 text-end">{{editableUuid}}</small>
+                <ng-template #titleNew>
+                    <h2 mat-dialog-title class="col-12 m-0">Nuevo</h2>
+                </ng-template>
+            </div>
+            <div class="modal-body pt-0">
+
+                <div class="row">
+                    <mat-form-field class="col-sm-12 col-md-5 mb-2" hintLabel="Max 30 characters">
+                        <mat-label>Título</mat-label>
+                        <input matInput #title maxlength="30" placeholder="Título..." 
+                        [(ngModel)]="request.title" autocomplete="off">
+                        <mat-hint align="end">{{title.value.length}}/30</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field class="col-sm-12 col-md-7 mb-2" hintLabel="Max 100 characters">
+                        <mat-label>Dirección</mat-label>
+                        <input matInput #address maxlength="100" placeholder="Calle x esquina y"
+                            [(ngModel)]="request.address"
+                            (keyup.enter)="search()" autocomplete="off">
+                        <mat-hint align="end">{{address.value.length}}/100</mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="containerx">
+                    <div id="editorMap" class="map"></div>
+                    <mat-form-field appearance="outline" class="input-seeker">
+                        <mat-label>Búsqueda</mat-label>
+                        <input matInput placeholder="Región, calle..." 
+                        [(ngModel)]="seeker" #seekerinput [value]="request.address" 
+                        (keyup.enter)="search(seeker)" autocomplete="off">
+                        <mat-icon matSuffix (click)="seekerinput.select()">location_searching</mat-icon>
+                    </mat-form-field>
+                </div>
+            </div>
+            <mat-dialog-actions align="end" class="p-2">
+                <button type="button" #btnClose hidden class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button mat-raised-button data-bs-dismiss="modal" #btnCancel class="me-2">Cancelar</button>
+                <button mat-raised-button *ngIf="editableFlag; else btnNew"
+                    (click)="save(eVerb.UPDATE)">Actualizar</button>
+                <ng-template #btnNew>
+                    <button mat-raised-button (click)="save(eVerb.CREATE)">Crear</button>
+                </ng-template>
+            </mat-dialog-actions>
         </div>
     </div>
 </div>

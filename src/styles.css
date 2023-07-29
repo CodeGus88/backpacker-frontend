@@ -6,22 +6,15 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
-/* Scroll Personalizado */
-/* 
-body::-webkit-scrollbar {
-	width: 7px;
-	background: #8a9de4;
+/* Sirve para el fondo de los modals bootstrap, para que se parezca al de angular material*/
+.modal-backdrop.show {
+	opacity: 0.32;
+	background-color: rgba(0, 0, 0, 0.8);
 }
-
-body::-webkit-scrollbar-thumb {
-	background: rgba(255,255,255, .2);
-	border-radius: 5px;
-	border-right: 2px solid #021b79;
-} */
-
-body { overflow-y: hidden; } 
-
-
+/* Para mostrar snackbar encima del modal de bootstrap */
+.cdk-overlay-container {
+z-index: 10000 !important;
+}
 
 /* items de las listas */
 .card-item{
@@ -30,4 +23,19 @@ body { overflow-y: hidden; }
 
 .card-header-image {
 	background-size: cover;
-  }
+}
+
+/* toolbar title */
+.secondary-toolbar-title{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 20px;
+}
+
+/* for rating stars */
+igc-rating::part(star) {
+    color: yellow;
+}
+
+igc-rating {
+    --gap: 10px;
+}

@@ -10,7 +10,6 @@ import { RegisterComponent } from './auth/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MenuComponent } from './components/menu/menu.component';
 
-// toast
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TouristPlaceComponent } from './pages/tourist-place/tourist-place-index/tourist-place.component';
@@ -18,10 +17,6 @@ import { TouristPlaceViewComponent } from './pages/tourist-place/tourist-place-v
 import { TouristPlaceCreateComponent } from './pages/tourist-place/tourist-place-create/tourist-place-create.component';
 import { TouristPlaceEditComponent } from './pages/tourist-place/tourist-place-edit/tourist-place-edit.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
-// Multiselect
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-
-import { GaleryComponent } from './components/galery/galery.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { interceptorProvider } from './interceptors/auth-interceptor.interceptor';
 import { RatingComponent } from './components/rating/rating.component';
@@ -30,7 +25,8 @@ import { AddressReadOnlyComponent } from './components/address/address-read-only
 import { SharedModule } from './shared/shared.module';
 import { ConfirmDialog } from './components/confirm-dialog.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
-
+import { GalleryComponent } from './components/gallery/gallery.component';
+import { ImageDisplayModalComponent } from './components/image-display-modal/image-display-modal.component';
 
 @NgModule({
   declarations: [
@@ -43,13 +39,15 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     TouristPlaceViewComponent,
     TouristPlaceCreateComponent,
     TouristPlaceEditComponent,
-    GaleryComponent,
+    GalleryComponent,
     ImageViewerComponent,
     RatingComponent,
     AddressComponent,
     AddressReadOnlyComponent,
     ConfirmDialog,
-    NotFoundComponent
+    NotFoundComponent,
+    GalleryComponent,
+    ImageDisplayModalComponent
   ],
   imports: [
     BrowserModule,
@@ -59,9 +57,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     ImageCropperModule,
-    // NgMultiSelectDropDownModule.forRoot(),
     SharedModule
-    
   ],
   providers: [interceptorProvider],
   bootstrap: [AppComponent],

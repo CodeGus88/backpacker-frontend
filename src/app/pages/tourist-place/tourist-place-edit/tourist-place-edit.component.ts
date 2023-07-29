@@ -1,17 +1,16 @@
 import { Component } from '@angular/core';
-import { Request } from 'src/app/dtos/touristplace/request.dto';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
 import { ActivatedRoute } from '@angular/router';
-import { ImageCroppedEvent } from 'ngx-image-cropper';
-import { CategoryService } from 'src/app/services/categoriy/category.service';
+import { ImageCroppedEvent, base64ToFile } from 'ngx-image-cropper';
+import { CategoryService } from 'src/app/services/category/category.service';
 import { Category } from 'src/app/dtos/category/category.dto';
-import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { environment } from 'src/environments/environment';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { TouristPlaceDto } from 'src/app/dtos/touristplace/tourist-place.dto';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from 'src/app/components/confirm-dialog.component';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-tourist-place-edit',
@@ -20,7 +19,7 @@ import { ConfirmDialog } from 'src/app/components/confirm-dialog.component';
 })
 export class TouristPlaceEditComponent {
 
-  protected request: Request;
+  // protected request: Request;
   protected tpDto: TouristPlaceDto;
   protected imageIconUrl: String = '';
   protected imageSelector: String = '';
@@ -28,37 +27,51 @@ export class TouristPlaceEditComponent {
   protected imgChangeEvt: any = '';
   protected cropImgPreview: any = '';
   protected file: any;
-
   protected img: any;
-
   protected errors: any;
 
   // Multiselect
-  protected dropdownList: Category[] = [];
+  protected categories: Category[] = [];
   protected selectedItems: Category[] = [];
-  protected dropdownSettings: IDropdownSettings = {};
 
   // for address child
   protected eEntity = EEntity;
+
+  // Formulario
+  protected form: FormGroup = this.fb.group({
+    name: ['', [Validators.minLength(2), Validators.maxLength(35)]],
+      imageIcon: [''],
+      isPublic: [false],
+      categories: [[], [Validators.required, (fc: FormControl) => {
+        const value = fc.value;
+        if (!Array.isArray(value) || value.length === 0 || value.length > 3) {
+          return { multiSelect: true };
+        }
+      return null;
+      }]],
+      resume: ['', [Validators.minLength(10), Validators.maxLength(500)]],
+      keywords: ['', [Validators.minLength(1), Validators.maxLength(50)]],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(10000)]]
+  });
 
   constructor(
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private touristPlaceService: TouristPlaceService,
     private categoryService: CategoryService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    protected fb: FormBuilder
   ) {
-    this.request = new Request();
     this.tpDto = new TouristPlaceDto();
     this.tpDto.uuid = this.route.snapshot.params['uuid'];
     this.errors = [];
   }
 
   ngOnInit() {
-    this.multiSelectInit();
     this.categoryService.findAll().subscribe({
       next: data => {
-        this.dropdownList = data ?? [];
+        console.log(data);
+        this.categories = data ?? [];
       },
       error: error => {
         console.log(error);
@@ -68,7 +81,6 @@ export class TouristPlaceEditComponent {
     this.touristPlaceService.findById(this.tpDto.uuid).subscribe(
       {
         next: data => {
-          console.log(data);
           this.loadFormData(data);
         },
         error: e => {
@@ -85,36 +97,25 @@ export class TouristPlaceEditComponent {
   }
 
   private loadFormData(data: any) {
+    let catSelect: any[] = [];
+    data.categories.map((item:any) => catSelect.push(item.id));
+    data.categories = catSelect;
+    this.form.get('name')?.setValue(data.name);
+    this.form.get('imageIcon')?.setValue(data.imageIcon);
+    this.form.get('isPublic')?.setValue(data.isPublic);
+    this.form.get('categories')?.setValue(data.categories);
+    this.form.get('resume')?.setValue(data.resume);
+    this.form.get('keywords')?.setValue(data.keywords);
+    this.form.get('description')?.setValue(data.description);
+
     this.tpDto = data;
-    this.request.name = data.name;
-    this.request.categories = data.categories;
-    this.request.description = data.description;
-    this.request.imageIcon = data.imageIcon;
-    this.request.isPublic = data.isPublic;
-    this.request.keywords = data.keywords;
-    this.request.resume = data.resume;
     this.imageIconUrl = this.getImageUrl(this.tpDto.uuid, this.tpDto.imageIcon);
 
     this.selectedItems = data.categories ?? [];
   }
 
-  multiSelectInit(): void {
-    this.dropdownSettings = {
-      singleSelection: false,
-      idField: 'id',
-      textField: 'name',
-      itemsShowLimit: 10,
-      allowSearchFilter: true,
-      limitSelection: 3
-    };
-  }
-
   update(): void {
-    this.request.imageIcon = this.tpDto.imageIcon;
-    this.request.categories = this.selectedItems.map(e => { return { id: e.id } });
-
-    console.log(this.request);
-    this.touristPlaceService.update(this.tpDto.uuid, this.request).subscribe(
+    this.touristPlaceService.update(this.tpDto.uuid, this.form.value).subscribe(
       {
         next: data => {
           console.log(data);
@@ -152,8 +153,7 @@ export class TouristPlaceEditComponent {
         if(error.status = 401)
           this.snackBar.open("No tiene los privilegios para realizar está acción", "SIN PERMISO", {duration: 3000});
         else
-        this.snackBar.open("Algo salió mal", "ERROR", {duration: 3000});
-        console.log(error);
+          this.snackBar.open("Algo salió mal", "ERROR", {duration: 3000});
       }
     });
   }
@@ -164,21 +164,7 @@ export class TouristPlaceEditComponent {
     this.imgChangeEvt = event;
   }
   cropImg(e: ImageCroppedEvent) {
-    this.cropImgPreview = e.base64;
-    this.file = this.dataURLtoFile(this.cropImgPreview, 'image.png');
-  }
-
-  dataURLtoFile(dataurl: any, filename: any) {
-    let arr = dataurl.split(','),
-      mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n);
-
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
+    this.file = base64ToFile(e.base64!);
   }
 
   getImageUrl(uuid?: String, imageIcon?: String): String {
@@ -189,26 +175,28 @@ export class TouristPlaceEditComponent {
   }
 
   deleteImageIcon(): void {
-
-    const dialogRef = this.dialog.open(ConfirmDialog, {
-      width: '250px',
-      data: {name: 'Nombre'}
+    const dialogRefx = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'CONFIRMACIÓN',
+        content: '¿Estás seguro de eliminar la carátula?',
+      }
     });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      if (result.isConfirmed) {
-        this.touristPlaceService.removeImageIcon(this.tpDto.uuid ?? '', this.tpDto.imageIcon ?? '').subscribe({
-          next: data => {
-            this.loadFormData(data);
-            this.snackBar.open("La carátula fue eliminada.", "¡Eliminado!", {duration: 3000})
-          },
-          error: e => {
-            if(e.status = 401)
-              this.snackBar.open("No tiene los privilegios para realizar está acción", "SIN PERMISO", {duration: 3000})
-            else 
-              console.log(e);
-          }
-        });
+    dialogRefx.afterClosed().subscribe({
+      next: result => {
+        if (result) {
+          this.touristPlaceService.removeImageIcon(this.tpDto.uuid ?? '', this.tpDto.imageIcon ?? '').subscribe({
+            next: data => {
+              this.loadFormData(data);
+              this.snackBar.open("La carátula fue eliminada.", "ÉXITO", {duration: 3000})
+            },
+            error: e => {
+              if(e.status = 401)
+                this.snackBar.open("No tiene los privilegios para realizar está acción", "SIN PERMISO", {duration: 3000})
+              else 
+                console.log(e);
+            }
+          });
+        }
       }
     });
   }

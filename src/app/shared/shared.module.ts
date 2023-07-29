@@ -15,6 +15,10 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatListModule} from '@angular/material/list';
 
 const libs = [
   CommonModule,
@@ -31,7 +35,11 @@ const libs = [
   MatButtonToggleModule,
   MatPaginatorModule,
   MatCheckboxModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatDividerModule,
+  MatExpansionModule,
+  MatListModule,
+  MatGridListModule
 ]
 
 @NgModule({
@@ -41,4 +49,4 @@ const libs = [
 })
 export class SharedModule {
   
- }
+}

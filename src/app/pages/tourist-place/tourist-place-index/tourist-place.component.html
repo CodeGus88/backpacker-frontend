@@ -1,6 +1,6 @@
 <mat-toolbar color="primary" class="m-0">
     <mat-toolbar-row>
-        <span class="app-title">Lugares turísticos</span>
+        <span class="secondary-toolbar-title">Lugares turísticos</span>
         <span class="secondary-toolbar-spacer"></span>
         <button mat-icon-button aria-label="Add" (click)="redirectTo('touristplaces/create')">
             <mat-icon>add_circle</mat-icon>
@@ -9,6 +9,7 @@
 </mat-toolbar>
 
 <div class="container mt-3 mb-5">
+
     <mat-card>
         <mat-card-header class="row me-1">
             <div class="col-lg-6 col-md-6 col-sm-12">
@@ -17,6 +18,7 @@
                         <mat-label>Búsqueda</mat-label>
                         <input matInput placeholder="Ingresa un texto para buscar" id="search">
                     </mat-form-field>
+
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12">
@@ -57,20 +59,14 @@
                             <div *ngFor="let category of getCategoryList(item.categories)">{{category}}</div>
                         </div>
                         <div class="cover-text-left ms-1 d-flex">
-                            <i class="material-icons"
-                            #tooltip="matTooltip"
-                            matTooltip="{{item.resume}}"
-                            matTooltipPosition="below"
-                            matTooltipHideDelay="500"
-                            aria-label="Button that displays a tooltip that hides when scrolled out of the container"
-                            >public</i>
+                            <i class="material-icons" #tooltip="matTooltip" matTooltip="{{item.resume}}"
+                                matTooltipPosition="below" matTooltipHideDelay="500"
+                                aria-label="Button that displays a tooltip that hides when scrolled out of the container">public</i>
                         </div>
                     </div>
                     <mat-card-content>
                         <div class="card-body">
-                            <p 
-                            class="card-text fw-lighter text-justify resume-resume mt-3"
-                            >{{item.resume}}</p>
+                            <p class="card-text fw-lighter text-justify resume-resume mt-3">{{item.resume}}</p>
                         </div>
                     </mat-card-content>
                     <mat-card-actions>
@@ -92,7 +88,7 @@
                 </div>
                 <mat-paginator #paginator class="demo-paginator me-auto" (page)="pageChanged($event)"
                     [length]="paginate.totalElements" [pageSize]="paginate.size" [disabled]="false"
-                    [showFirstLastButtons]="true" [pageSizeOptions]="[2, 8, 16, 32, 64]" [hidePageSize]="false"
+                    [showFirstLastButtons]="true" [pageSizeOptions]="[4, 8, 16, 32, 64]" [hidePageSize]="false"
                     [pageIndex]="paginate.page" aria-label="Select page">
                 </mat-paginator>
             </div>
