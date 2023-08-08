@@ -36,4 +36,8 @@ export class RatingService extends BaseService {
     return this.http.delete<boolean>(`${this.apiUrl}/${eRating}/${uuid}`); 
   }
 
+  public punctuationByentityUuid(eRating: ERating, entityUuid: string): Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/${eRating}/punctuation/${entityUuid}`);
+  }
+
 }

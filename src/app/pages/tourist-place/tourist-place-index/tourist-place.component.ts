@@ -3,13 +3,14 @@ import { Paginate } from 'src/app/dtos/paginable.dto';
 import { TouristPlaceItem } from 'src/app/dtos/touristplace/item.dto';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, debounceTime, fromEvent, map } from 'rxjs';
+import { Observable, Subscription, debounceTime, filter, fromEvent, map } from 'rxjs';
 import { PaginableDataInput } from 'src/app/dtos/paginable-data-input.dto';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { EOrder } from 'src/app/enums/e.order.enum';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { PageEvent } from '@angular/material/paginator';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
 
 @Component({
   selector: 'app-list',
@@ -17,6 +18,9 @@ import { PageEvent } from '@angular/material/paginator';
   styleUrls: ['./tourist-place.component.scss', './tourist-place.component.css']
 })
 export class TouristPlaceComponent {
+
+  protected gridCols: number = 4;
+  private subscription: Subscription[] = [];
 
   protected paginate: Paginate;
   protected totalPages: number;
@@ -30,7 +34,8 @@ export class TouristPlaceComponent {
   constructor(
     private touristPlaceService: TouristPlaceService,
     private matSnackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private  mediaObserver: MediaObserver
   ) {
     this.paginate = new Paginate(0, 8, 0, 'rating,createdAt', EOrder.DESC, '');
     this.list = [];
@@ -44,6 +49,7 @@ export class TouristPlaceComponent {
   }
 
   ngOnInit() {
+    this.mediaChange();
     this.loadTable(this.touristPlaceService.findAll(this.paginate));
     // searcher event
     const search = document.getElementById('search');
@@ -127,6 +133,39 @@ export class TouristPlaceComponent {
 
   goToPageNumber(){
     this.onLoadData();
+  }
+
+  private mediaChange(): void {
+    this.subscription.push(
+      this.mediaObserver.asObservable()
+        .pipe(
+          filter((changes: MediaChange[]) => changes.length > 0),
+          map((changes: MediaChange[]) => changes[0])
+        ).subscribe((change: MediaChange) => {
+          switch (change.mqAlias) {
+            case 'xs': {
+              this.gridCols = 1;
+              break;
+            }
+            case 'sm': {
+              this.gridCols = 1;
+              break;
+            }
+            case 'md': {
+              this.gridCols = 2;
+              break;
+            }
+            case 'lg': {
+              this.gridCols = 4;
+              break;
+            }
+            default: {
+              this.gridCols = 6;
+              break;
+            }
+          }
+        })
+    );
   }
 
 }

@@ -57,7 +57,6 @@ mat-button-toggle-group{
     text-align: left;
 }
 
-
 .title-resume{
     overflow:hidden;
     white-space:nowrap;
@@ -69,6 +68,11 @@ mat-button-toggle-group{
     -webkit-box-orient: vertical;
     overflow: hidden;
     -webkit-line-clamp:5
+}
+
+.img-ratio{
+    aspect-ratio: 16 / 9;
+    width: 100%;
 }
 
 

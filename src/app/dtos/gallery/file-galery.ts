@@ -15,7 +15,7 @@ export interface FileGalery{
     eModule: EModule;
     eEntity: EEntity;
     entityUuid: string;
-    urlList: FileRef[];
+    // urlList: FileRef[];
     writePermission: boolean;
 
 }

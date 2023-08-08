@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { MenuComponent } from './components/menu/menu.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,7 +17,6 @@ import { TouristPlaceViewComponent } from './pages/tourist-place/tourist-place-v
 import { TouristPlaceCreateComponent } from './pages/tourist-place/tourist-place-create/tourist-place-create.component';
 import { TouristPlaceEditComponent } from './pages/tourist-place/tourist-place-edit/tourist-place-edit.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
-import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { interceptorProvider } from './interceptors/auth-interceptor.interceptor';
 import { RatingComponent } from './components/rating/rating.component';
 import { AddressComponent } from './components/address/address-manager/address.component';
@@ -27,6 +26,9 @@ import { ConfirmDialog } from './components/confirm-dialog.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { ImageDisplayModalComponent } from './components/image-display-modal/image-display-modal.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxStarsModule } from 'ngx-stars';
+import { RatingFormDialog } from './components/rating/rating-form-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,8 +42,8 @@ import { ImageDisplayModalComponent } from './components/image-display-modal/ima
     TouristPlaceCreateComponent,
     TouristPlaceEditComponent,
     GalleryComponent,
-    ImageViewerComponent,
     RatingComponent,
+    RatingFormDialog,
     AddressComponent,
     AddressReadOnlyComponent,
     ConfirmDialog,
@@ -57,7 +59,8 @@ import { ImageDisplayModalComponent } from './components/image-display-modal/ima
     ReactiveFormsModule,
     BrowserAnimationsModule,
     ImageCropperModule,
-    SharedModule
+    SharedModule,
+    NgxStarsModule
   ],
   providers: [interceptorProvider],
   bootstrap: [AppComponent],

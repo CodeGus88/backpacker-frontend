@@ -14,6 +14,10 @@ export class GalleryService extends BaseService{
     super();
   }
 
+  findByEntityUuid(eEntity: EEntity, entityUuid: string): Observable<FileDto[]>{
+    return this.http.get<FileDto[]>(`${this.apiUrl}/media/${eEntity}/find-by-entity-uuid/${entityUuid}`);
+  }
+
   create(eEntity: EEntity, file: FormData): Observable<FileDto>{
     return this.http.post<FileDto>(`${this.apiUrl}/media/${eEntity}`, file);
   }

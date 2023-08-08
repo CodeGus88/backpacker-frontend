@@ -2,21 +2,32 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RatingDto } from 'src/app/dtos/rating/rating.dto';
 import { ERating } from 'src/app/enums/rating.enum';
 import { RatingService } from 'src/app/services/rating/rating.service';
-import { StartsArrayGenerator } from 'src/app/util/stars-array';
 import { TokenService } from 'src/app/auth/services/token.service';
 import { EROLE } from 'src/app/auth/enums/role.enum';
 import { RatingItem } from 'src/app/dtos/rating/item.dto';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from '../confirm-dialog.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RatingFormDialog } from './rating-form-dialog.component';
+
+export interface FormData {
+  punctuation: number;
+  comment: string;
+  entityUuid: string;
+}
+
+export interface Data {
+  eRating?: ERating;
+  editableUuid?: string | undefined;
+  formData: FormData
+}
 
 @Component({
   selector: 'app-rating',
   templateUrl: './rating.component.html',
   styleUrls: ['./rating.component.css']
 })
-export class RatingComponent extends StartsArrayGenerator {
+export class RatingComponent {
 
   // inputs
   @Input() eRating?: ERating;
@@ -25,25 +36,19 @@ export class RatingComponent extends StartsArrayGenerator {
   // outputs
   @Output() punctuationEmiter = new EventEmitter<number>();
 
-  protected showForm?: boolean = false;
-  protected editableUuid?: string;
-  protected ratingDto?: RatingDto = new RatingDto();
-  protected limit = 20;
-  protected formGroup: FormGroup;
+  protected ratingDto: RatingDto;
+
+  protected limit: number = 20;
+
+  @Output() private data = new EventEmitter<number>();
 
   constructor(
     private ratingService: RatingService,
     private tokenService: TokenService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-    private fb: FormBuilder
+    private dialog: MatDialog
   ) {
-    super(5);
-    this.formGroup = this.fb.group({
-      punctuation: [0, [Validators.min(1), Validators.max(5)]],
-      comment: [''],
-      entityUuid: [this.entityUuid, [Validators.required]]
-    });
+    this.ratingDto = new RatingDto();
   }
 
   ngOnInit() {
@@ -59,6 +64,7 @@ export class RatingComponent extends StartsArrayGenerator {
         else {
           this.refreshData(data);
         }
+        this.data.emit(data.punctuation);
       },
       error: error => {
         console.log(error);
@@ -81,105 +87,81 @@ export class RatingComponent extends StartsArrayGenerator {
 
   private refreshData(data: RatingDto): void {
     this.ratingDto = data;
-    this.showRatingForm();
     this.punctuationEmiter.emit(Math.round((this.ratingDto!.punctuation! + Number.EPSILON) * 10) / 10);
   }
 
-  private showRatingForm(): void {
-    let element = this.ratingDto?.items.find(i => i.username === this.tokenService.getUsername());
-    this.showForm = element==undefined?true:false;
-    if (!element){
-      // this.ratingRequest = new RatingRequest(this.entityUuid!.toString());
-      this.showForm = true;
-    }else{
-      // this.ratingRequest = undefined;
-      this.showForm = false;
-    }
-  }
-
-  ratingChanged($event: any) {
-    // this.ratingRequest!.punctuation = $event.detail;
-    this.formGroup.get('punctuation')?.patchValue($event.detail);
-  }
-
-  isPermited(username: string, verb: string = ''): boolean {
-    if (this.tokenService.getUsername() == username || (this.tokenService.hasRole(EROLE.ROLE_ADMIN) && verb.toLowerCase() === 'delete'))
+  isPermited(username: string | undefined, verb: string = ''): boolean {
+    if (username && (this.tokenService.getUsername() == username || (this.tokenService.hasRole(EROLE.ROLE_ADMIN) && verb.toLowerCase() === 'delete')))
       return true;
-    return false;
-  }
-
-  onSubmit(){
-    if(!this.editableUuid)
-      this.create()
-    else if(this.editableUuid)
-      this.update();
-  }
-
-  create() {
-    this.ratingService.create(this.eRating!, this.formGroup.value).subscribe({
-      next: data => {
-        console.log(data);
-        this.onLoadRating();
-        this.snackBar.open("Se registro el voto", "ÉXITO", {duration: 3000});
-      },
-      error: error => {
-        console.log(error);
-        this.snackBar.open(error.error.message, "ERROR " + error.status, {duration: 3000});
-      }
-    });
-  }
-
- update() {
-    this.ratingService.update(this.eRating!, this.editableUuid!, this.formGroup.value).subscribe({
-      next: data => {
-        console.log(data);
-        this.onLoadRating();
-        this.snackBar.open("Se guardaron los cambios", "EDITADO", {duration: 3000});
-      },
-      error: error => {
-        console.log(error);
-        this.snackBar.open(error.message, "ERROR", {duration: 3000});
-      }
-    });
-  }
-
-  showEdit(ratingItem?: RatingItem, entityUuid?: string) {
-    if (this.editableUuid) {
-      this.showRatingForm();
-      this.editableUuid = undefined;
-    } else {
-      this.formGroup.patchValue({
-        comment: ratingItem?.comment,
-        punctuation: ratingItem?.punctuation,
-        entityUuid: entityUuid
-      });
-      this.editableUuid = ratingItem?.uuid;
+    else if(verb.toLowerCase() == 'create'){
+      let isLoguet: boolean = this.tokenService.isLogged();
+      let containsCommentForUser: boolean = this.ratingDto?.items.findIndex(item => item.username == this.tokenService.getUsername()) > -1;
+      if(isLoguet && !containsCommentForUser)
+        return true;
     }
+    return false;
   }
 
   deleteByUuid(uuid: string) {
     const dialogRef = this.dialog.open(ConfirmDialog, {
-      width: '250px',
-      data: {name: 'Nombre'}
+      data: { title: 'CONFIRMACIÓN', content: 'Se eliminará la puntuación, ¿Quieres continuar?' }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.ratingService.deleteByUuid(this.eRating!, uuid).subscribe({
           next: data => {
             if (data) {
               this.onLoadRating();
-              this.editableUuid = undefined;
-              this.snackBar.open("Se eliminó correctamente", "ÉXITO", {duration: 3000});
+              this.snackBar.open("Se eliminó correctamente", "ÉXITO", { duration: 3000 });
             } else
-              this.snackBar.open("Algo salió, no se pudo eliminar este recurso", "FALLÓ", {duration: 3000});
+              this.snackBar.open("Algo salió, no se pudo eliminar este recurso", "FALLÓ", { duration: 3000 });
           },
           error: e => {
-            this.snackBar.open(e.message, "ERROR", {duration: 3000});
+            this.snackBar.open(e.message, "ERROR", { duration: 3000 });
           }
         });
       }
     });
+  }
+
+  openFormDialog(ratingItem?: RatingItem): void {
+    let data: Data = {
+      editableUuid: ratingItem?.uuid,
+      eRating: this.eRating,
+      formData: {
+        comment: ratingItem?.comment ?? '',
+        punctuation: ratingItem?.punctuation ?? 0,
+        entityUuid: this.ratingDto!.entityUuid!
+      }
+    };
+    const dialogRef = this.dialog.open(RatingFormDialog, { data });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (data.editableUuid) {
+          let index: number = this.ratingDto.items.findIndex(item => item.uuid === result.uuid);
+          if(index > -1){
+            Object.assign(this.ratingDto!.items[index], result);
+            this.updatePunctuation();
+          }
+        } else {
+          this.ratingDto?.items.push(result);
+          this.updatePunctuation();
+        }
+      }
+    })
+  }
+
+  private updatePunctuation(){
+    this.ratingService.punctuationByentityUuid(this.eRating!, this.entityUuid!).subscribe(
+      result => {
+        console.log(result);
+        this.ratingDto.punctuation = result.population;
+        this.ratingDto.punctuation = result.punctuation;
+        this.data.emit(result.punctuation);
+      }
+    );
   }
 
 }

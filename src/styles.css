@@ -28,8 +28,14 @@ z-index: 10000 !important;
 /* toolbar title */
 .secondary-toolbar-title{
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 20px;
+	font-size: 18px;
 }
+
+.secondary-toolbar-subtitle{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
 
 /* for rating stars */
 igc-rating::part(star) {

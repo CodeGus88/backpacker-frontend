@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TouristPlaceService } from '../../../services/tourist-place/tourist-place.service';
-import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EModule } from 'src/app/enums/e-module.enum';
 import { EEntity } from 'src/app/enums/e-entity.enum';
@@ -11,8 +10,10 @@ import { ERating } from 'src/app/enums/rating.enum';
 import { AddressDto } from 'src/app/dtos/address/address.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from 'src/app/components/confirm-dialog.component';
-import { FileGalery, FileRef } from 'src/app/dtos/gallery/file-galery';
 import { GalleryComponent } from 'src/app/components/gallery/gallery.component';
+import { FileUrlGenerator } from 'src/app/constants/files-url';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { Subscription, filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-tourist-place-view',
@@ -21,6 +22,11 @@ import { GalleryComponent } from 'src/app/components/gallery/gallery.component';
 })
 export class TouristPlaceViewComponent {
 
+  protected gridCols = 2;
+  protected ratio: string = '16:9'
+  subscription: Subscription[] = [];
+
+  protected imgUrl: string = '';
   protected punctuation: number = 0;
 
   public tpDto: TouristPlaceDto;
@@ -32,7 +38,7 @@ export class TouristPlaceViewComponent {
   // for child image-viewer
   protected clickedImg?: FileDto;
 
-  protected fileGalery: FileGalery | undefined;
+  // protected fileGalery: FileGalery | undefined;
   
 
   // for rating child
@@ -43,7 +49,8 @@ export class TouristPlaceViewComponent {
     private touristPlaceService: TouristPlaceService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private mediaObserver: MediaObserver,
   ){
     this.uuid = this.route.snapshot.params['uuid'];
     this.tpDto = new TouristPlaceDto();
@@ -51,6 +58,7 @@ export class TouristPlaceViewComponent {
 
   ngOnInit() {
     this.onLoadData();
+    this.mediaChange();
   }
 
   onLoadData(){
@@ -58,7 +66,7 @@ export class TouristPlaceViewComponent {
       next: data => {
         console.log("data", data);
         this.tpDto = data;
-        this.loadUrlImages();
+        this.imgUrl = this.tpDto.files?FileUrlGenerator.getImageUrl(this.eEntity, this.uuid, this.tpDto.imageIcon): FileUrlGenerator.getDefaultImgUrl(this.eEntity);
       },
       error: e => {
         console.log(e);
@@ -70,16 +78,45 @@ export class TouristPlaceViewComponent {
     window.history.back();
   }
 
+  private mediaChange(): void {
+    this.subscription.push(
+      this.mediaObserver.asObservable()
+        .pipe(
+          filter((changes: MediaChange[]) => changes.length > 0),
+          map((changes: MediaChange[]) => changes[0])
+        ).subscribe((change: MediaChange) => {
+          switch (change.mqAlias) {
+            case 'xs': {
+              this.gridCols = 1;
+              this.ratio = '4:4';
+              break;
+            }
+            case 'sm': {
+              this.gridCols = 1;
+              this.ratio = '4:3';
+              break;
+            }
+            
+            default: {
+              this.gridCols = 2;
+              this.ratio = '16:9';
+              break;
+            }
+          }
+        })
+    );
+  }
+
   /**
    * Todos los archivos son las que existen en el lugar turistico
    */
-  getImageUrl(file?: String): string {
-      return `${environment.mediaPartialUrl}/${this.eEntity.toLowerCase()}/${this.uuid}/${file}`;
-  }
+  // getImageUrl(file?: String): string {
+  //     return `${environment.mediaPartialUrl}/${this.eEntity.toLowerCase()}/${this.uuid}/${file}`;
+  // }
 
-  getDefaultImgUrl(): string{
-    return `${environment.mediaPartialUrl}/${this.eEntity.toLocaleLowerCase()}/defaultImageIcon.png`;
-  }
+  // getDefaultImgUrl(): string{
+  //   return `${environment.mediaPartialUrl}/${this.eEntity.toLocaleLowerCase()}/defaultImageIcon.png`;
+  // }
 
   deleteByUuid(uuid: String = '') {
     if (!uuid)
@@ -128,7 +165,7 @@ export class TouristPlaceViewComponent {
     this.clickedImg = file;
   }
 
-  refreshPunctuationEvent($event: any){
+  refreshPunctuationEvent($event: number){
     this.punctuation = $event;
   }
 
@@ -140,32 +177,37 @@ export class TouristPlaceViewComponent {
     return `https://earth.google.com/web/@${addressDto.lat},${addressDto.lng}`;
   }
 
-  loadUrlImages(): void{
-    let urlList: FileRef [] = [];
-    this.tpDto.files.forEach(element => {
-      if(element.file)
-        urlList.push({
-          uuid: element.uuid!,
-          url: this.getImageUrl(element.file)
-        });
-      else
-        urlList.push({
-          uuid: element.uuid!,
-          url: this.getDefaultImgUrl()
-        });
-    });
-    this.fileGalery = {
-      eModule: EModule.TOURIST_PLACES,
-      eEntity: EEntity.TOURIST_PLACE_FILES,
-      entityUuid: this.uuid,
-      urlList: urlList,
-      writePermission: true
-    };
-  }
+  // loadUrlImages(): void{
+  //   let urlList: FileRef [] = [];
+  //   this.tpDto.files.forEach(element => {
+  //     if(element.file)
+  //       urlList.push({
+  //         uuid: element.uuid!,
+  //         url: this.getImageUrl(element.file)
+  //       });
+  //     else
+  //       urlList.push({
+  //         uuid: element.uuid!,
+  //         url: this.getDefaultImgUrl()
+  //       });
+  //   });
+  //   this.fileGalery = {
+  //     eModule: EModule.TOURIST_PLACES,
+  //     eEntity: EEntity.TOURIST_PLACE_FILES,
+  //     entityUuid: this.uuid,
+  //     urlList: urlList,
+  //     writePermission: true
+  //   };
+  // }
 
   openGallery(){
     this.dialog.open(GalleryComponent, {
-      data: this.fileGalery,
+      data: {
+            eModule: EModule.TOURIST_PLACES,
+            eEntity: EEntity.TOURIST_PLACE_FILES,
+            entityUuid: this.uuid,
+            writePermission: true
+          },
       width: '100%',
       height: 'auto'
     });

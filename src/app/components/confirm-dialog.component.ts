@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     <div mat-dialog-content>
       <p>{{data.content??'Continue?'}}</p>
     </div>
-    <div mat-dialog-actions>
+    <div mat-dialog-actions class="m-3">
       <button mat-button (click)="cancel()">{{data.btnCancel??'Cancel'}}</button>
       <button mat-button (click)="accept()" color="warn" [mat-dialog-close]="true" cdkFocusInitial>{{data.btnAcept??'yes'}}</button>
     </div>

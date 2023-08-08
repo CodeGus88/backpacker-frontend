@@ -46,33 +46,37 @@
         <mat-card-content>
 
             <div class="row m-auto justify-content-between">
-                <mat-card class="card-item p-0 mb-3" *ngFor="let item of list">
-                    <mat-card-header>
-                        <mat-card-title>{{item.name}}</mat-card-title>
-                        <mat-card-subtitle class="mb-2">Puntuación: {{item.rating??0}}</mat-card-subtitle>
-                    </mat-card-header>
-                    <div class="img-text-container">
-                        <img mat-card-image [src]="getImageUrl(item.uuid, item.imageIcon)"
-                            onerror="this.src= 'assets/images/default-image.jpg'" alt="ImageIcon"
-                            alt="Photo of a Shiba Inu" class="card-img-top">
-                        <div class="cover-text-right me-1">
-                            <div *ngFor="let category of getCategoryList(item.categories)">{{category}}</div>
-                        </div>
-                        <div class="cover-text-left ms-1 d-flex">
-                            <i class="material-icons" #tooltip="matTooltip" matTooltip="{{item.resume}}"
-                                matTooltipPosition="below" matTooltipHideDelay="500"
-                                aria-label="Button that displays a tooltip that hides when scrolled out of the container">public</i>
-                        </div>
-                    </div>
-                    <mat-card-content>
-                        <div class="card-body">
-                            <p class="card-text fw-lighter text-justify resume-resume mt-3">{{item.resume}}</p>
-                        </div>
-                    </mat-card-content>
-                    <mat-card-actions>
-                        <button mat-button (click)="redirectTo('touristplaces/'+item.uuid)">VER</button>
-                    </mat-card-actions>
-                </mat-card>
+                <mat-grid-list [cols]="gridCols" rowHeight="14:17">
+                    <mat-grid-tile  *ngFor="let item of list">
+                        <mat-card class="card-item" >
+                            <mat-card-header>
+                                <mat-card-title>{{item.name}}</mat-card-title>
+                                <mat-card-subtitle class="mb-2">Puntuación: {{item.rating??0}}</mat-card-subtitle>
+                            </mat-card-header>
+                            <div class="img-text-container">
+                                <!-- class="card-img-top img-ratio" -->
+                                <img mat-card-image [src]="getImageUrl(item.uuid, item.imageIcon)"
+                                    onerror="this.src= 'assets/images/default-image.jpg'" alt="ImageIcon"
+                                    alt="Photo of a Shiba Inu" class="img-ratio btn-pointer"
+                                    (click)="redirectTo('touristplaces/'+item.uuid)">
+                                <div class="cover-text-right me-1">
+                                    <div *ngFor="let category of getCategoryList(item.categories)">{{category}}</div>
+                                </div>
+                                <div class="cover-text-left ms-1 d-flex">
+                                    <i class="material-icons" #tooltip="matTooltip" matTooltip="{{item.resume}}"
+                                        matTooltipPosition="below" matTooltipHideDelay="500"
+                                        aria-label="Button that displays a tooltip that hides when scrolled out of the container">public</i>
+                                </div>
+                            </div>
+                            <mat-card-content>
+                                <div class="card-body">
+                                    <p class="card-text fw-lighter text-justify resume-resume mt-3">{{item.resume}}</p>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </mat-grid-tile>
+                </mat-grid-list>
+                
             </div>
         </mat-card-content>
 

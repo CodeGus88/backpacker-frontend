@@ -1,95 +1,78 @@
-<mat-toolbar color="primary" class="m-0">
-  <mat-toolbar-row style="display: flex;">
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="p-0">
     <button mat-icon-button (click)="backHistory()" class="me-3">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <span class="secondary-toolbar-title">Lugar turístico</span>
+    <!-- <span class="secondary-toolbar-title">Lugar turístico</span> -->
+    <div class="d-block">
+        <div class="secondary-toolbar-title mb-0">Lugar turístico</div>
+        <div class="secondary-toolbar-subtitle">{{tpDto.name}}</div>
+    </div>
     <span class="sub-menu-spacer"></span>
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menu">
-        <mat-icon>more_vert</mat-icon>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="redirectToEdit()">
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
       </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="redirectToEdit()">
-          <mat-icon>edit</mat-icon>
-          <span>Editar</span>
-        </button>
-        <button mat-menu-item (click)="deleteByUuid(tpDto.uuid)">
-          <mat-icon>delete</mat-icon>
-          <span>Eliminar</span>
-        </button>
-      </mat-menu>
+      <button mat-menu-item (click)="deleteByUuid(tpDto.uuid)">
+        <mat-icon>delete</mat-icon>
+        <span>Eliminar</span>
+      </button>
+    </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>
 
 <div class="container mt-3 mb-5">
   <mat-card>
     <mat-card-header>
-      <div class="row ps-2 pe-2">
+      <mat-grid-list [cols]="gridCols" [rowHeight]="ratio" class="w-100">
+        <mat-grid-tile class="rounded" style="background-color: gainsboro;">
+          <img [src]="imgUrl" class="w-100 btn p-0" alt="principal image" onerror="this.src= 'assets/images/default-image.jpg'"
+            (click)="openGallery()">
+        </mat-grid-tile>
 
-        <div class="col-sm-12 col-md-6 border border-1 p-0 rounded bg-simple-linear">
-          <div id="carouselControls" class="carousel slide align-middle" data-bs-ride="carousel">
-            <div class="carousel-inner rounded">
-              <div [ngClass]="{'carousel-item': true, 'active': tpDto.files.length == 0}" *ngIf="tpDto.imageIcon">
-                <img [src]="getImageUrl(tpDto.imageIcon)" class="d-block w-100 rounded" alt="image"
-                  (click)="imgViewer()" type="button" data-bs-toggle="modal" data-bs-target="#imageViewer">
-              </div>
-              <div [ngClass]="{'carousel-item':true, 'active': (i == 0)}"
-                *ngFor="let item of tpDto.files; let i = index">
-                <img [src]="getImageUrl(item.file)" class="d-block w-100 rounded" alt="image"
-                  (click)="imgViewer(item)" data-bs-toggle="modal" data-bs-target="#imageViewer" type="button">
-              </div>
-              <div class="carousel-item active" *ngIf="tpDto.files.length == 0 && !tpDto.imageIcon">
-                <img [src]="getDefaultImgUrl()" class="d-block w-100 rounded" alt="image">
-              </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls"
-              data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselControls"
-              data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="col-sm-12 col-md-6 d-flex border border-1 pt-2 bg-simple-linear rounded">
-          <div class="container-flex data-container align-middle col-12">
-            <h1 class="h1 text-center mt-2 mb-2">
-              {{tpDto.name}}
-            </h1>
-            <div class="text-center">
-              <button type="button" class="btn btn-light category-button me-1"
-                *ngFor="let category of tpDto.categories" #tooltip="matTooltip" matTooltip="{{category.description}}"
-                matTooltipPosition="below" matTooltipHideDelay="200"
-                aria-label="Button that displays a tooltip that hides when scrolled out of the container">{{category.name}}</button>
-            </div>
-            <div class="container in-line mb-5">
-              <p class="text-center mt-2">
-                <i class="fa-solid fa-quote-left me-1"></i>
-                <i>{{tpDto.resume?tpDto.resume:'undefined'}}</i>
-                <i class="fa-solid fa-quote-right ms-1"></i>
-              </p>
-            </div>
-            <div class="cover-options">
-              <div class="row">
-                <div class="col p-0 ps-1">
-                  <button mat-mini-fab color="" class="mb-2" (click)="openGallery()">
-                    <mat-icon>collections</mat-icon>
-                  </button>
+        <mat-grid-tile class="rounded">
+          <div class="border border-1 full-content data-container">
+            <div class="container-bg">
+              <div class="principal-text">
+                <h1 class="h1 text-center mt-2 mb-2">
+                  {{tpDto.name}}
+                </h1>
+                <div class="text-center">
+                  <button type="button" class="btn btn-light category-button me-1"
+                    *ngFor="let category of tpDto.categories" #tooltip="matTooltip"
+                    matTooltip="{{category.description}}" matTooltipPosition="below" matTooltipHideDelay="200"
+                    aria-label="Button that displays a tooltip that hides when scrolled out of the container">{{category.name}}</button>
                 </div>
-                <div class="col p-0 ps-1">
-                  <p class="btn btn-light">
-                    <small class="text-truncate fw-lighter">{{punctuation}} <i class="fa-solid fa-star"></i></small>
+                <div class="container in-line mb-5">
+                  <p class="text-center mt-2 resume-resume">
+                    <i class="fa-solid fa-quote-left me-1"></i>
+                    <i>{{tpDto.resume?tpDto.resume:'undefined'}}</i>
+                    <i class="fa-solid fa-quote-right ms-1"></i>
                   </p>
                 </div>
+                <div class="cover-options">
+                  <div class="row">
+                    <div class="col p-0 ps-1">
+                      <button mat-mini-fab color="" class="mb-2" (click)="openGallery()">
+                        <mat-icon>collections</mat-icon>
+                      </button>
+                    </div>
+                    <div class="col p-0 ps-1">
+                      <p class="btn btn-light">
+                        <small class="text-truncate fw-lighter">{{punctuation}} <i class="fa-solid fa-star"></i></small>
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </mat-grid-tile>
+      </mat-grid-list>
     </mat-card-header>
 
     <mat-card-content>
@@ -107,8 +90,15 @@
             <app-address-read-only [addresses]="tpDto.addresses" class="p-0"></app-address-read-only>
           </div>
         </div>
-        <app-rating [entityUuid]="uuid.toString()" [eRating]="eRating"
-          (punctuationEmiter)="refreshPunctuationEvent($event)"></app-rating>
+        <div class="container mt-3">
+          <div class="row">
+            <h2 class="h2 p-0">Punctuación</h2>
+            <app-rating [entityUuid]="uuid.toString()" [eRating]="eRating"
+              (punctuationEmiter)="refreshPunctuationEvent($event)"
+              (data)="refreshPunctuationEvent($event)"
+              class="p-0"></app-rating>
+          </div>
+        </div>
       </div>
     </mat-card-content>
   </mat-card>

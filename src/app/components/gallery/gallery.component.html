@@ -3,7 +3,7 @@
 </div>
 <mat-dialog-content class="mat-typography">
     <mat-grid-list [cols]="columns" gutterSize="2px" rowHeight="16:9" *ngIf="data && !isCreateMode">
-        <mat-grid-tile *ngFor="let item of data!.urlList; let position = index">
+        <mat-grid-tile *ngFor="let item of urlList; let position = index">
             <div class="containerx max-size">
                 <img class="gallery-small-image" [src]="item.url" [alt]="'icon' + (position + 1)"
                     (click)="openDialog(position)">
