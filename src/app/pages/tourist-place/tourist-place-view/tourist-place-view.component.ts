@@ -38,9 +38,6 @@ export class TouristPlaceViewComponent {
   // for child image-viewer
   protected clickedImg?: FileDto;
 
-  // protected fileGalery: FileGalery | undefined;
-  
-
   // for rating child
   protected eRating = ERating.TOURIST_PLACES_RATING;
 
@@ -64,9 +61,8 @@ export class TouristPlaceViewComponent {
   onLoadData(){
     this.touristPlaceService.findById(this.uuid).subscribe({
       next: data => {
-        console.log("data", data);
         this.tpDto = data;
-        this.imgUrl = this.tpDto.files?FileUrlGenerator.getImageUrl(this.eEntity, this.uuid, this.tpDto.imageIcon): FileUrlGenerator.getDefaultImgUrl(this.eEntity);
+        this.imgUrl = this.tpDto.imageIcon?FileUrlGenerator.getImageUrl(this.eEntity, this.uuid, this.tpDto.imageIcon): FileUrlGenerator.getDefaultImgUrl(this.eEntity);
       },
       error: e => {
         console.log(e);
@@ -96,7 +92,6 @@ export class TouristPlaceViewComponent {
               this.ratio = '4:3';
               break;
             }
-            
             default: {
               this.gridCols = 2;
               this.ratio = '16:9';
@@ -106,17 +101,6 @@ export class TouristPlaceViewComponent {
         })
     );
   }
-
-  /**
-   * Todos los archivos son las que existen en el lugar turistico
-   */
-  // getImageUrl(file?: String): string {
-  //     return `${environment.mediaPartialUrl}/${this.eEntity.toLowerCase()}/${this.uuid}/${file}`;
-  // }
-
-  // getDefaultImgUrl(): string{
-  //   return `${environment.mediaPartialUrl}/${this.eEntity.toLocaleLowerCase()}/defaultImageIcon.png`;
-  // }
 
   deleteByUuid(uuid: String = '') {
     if (!uuid)
@@ -151,10 +135,6 @@ export class TouristPlaceViewComponent {
     return text.replaceAll('\n', '<br>');
   }
 
-  changeListEvent($files: FileDto[]) {
-    this.tpDto.files = $files;
-  }
-
   imgViewer(file?: FileDto){
     if(!file){
       file = new FileDto();
@@ -176,29 +156,6 @@ export class TouristPlaceViewComponent {
   getGoogleEarth(addressDto: AddressDto): string{
     return `https://earth.google.com/web/@${addressDto.lat},${addressDto.lng}`;
   }
-
-  // loadUrlImages(): void{
-  //   let urlList: FileRef [] = [];
-  //   this.tpDto.files.forEach(element => {
-  //     if(element.file)
-  //       urlList.push({
-  //         uuid: element.uuid!,
-  //         url: this.getImageUrl(element.file)
-  //       });
-  //     else
-  //       urlList.push({
-  //         uuid: element.uuid!,
-  //         url: this.getDefaultImgUrl()
-  //       });
-  //   });
-  //   this.fileGalery = {
-  //     eModule: EModule.TOURIST_PLACES,
-  //     eEntity: EEntity.TOURIST_PLACE_FILES,
-  //     entityUuid: this.uuid,
-  //     urlList: urlList,
-  //     writePermission: true
-  //   };
-  // }
 
   openGallery(){
     this.dialog.open(GalleryComponent, {

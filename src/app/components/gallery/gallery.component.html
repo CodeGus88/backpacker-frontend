@@ -12,6 +12,7 @@
                 </button>
             </div>
         </mat-grid-tile>
+        <span *ngIf="urlList.length == 0">No existen imágenes...</span>
     </mat-grid-list>
 
     <div class="container text-center" *ngIf="isCreateMode">

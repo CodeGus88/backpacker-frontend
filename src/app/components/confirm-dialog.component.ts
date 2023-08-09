@@ -13,12 +13,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
       <button mat-button (click)="accept()" color="warn" [mat-dialog-close]="true" cdkFocusInitial>{{data.btnAcept??'yes'}}</button>
     </div>
   `,
-  // styles: [`
-  //   /* confirm dialog */
-  //   .confirm-dialog .mat-dialog-container{
-  //       z-index: 10000;
-  //   }
-  // `]
+  styles: []
 })
 export class ConfirmDialog {
 

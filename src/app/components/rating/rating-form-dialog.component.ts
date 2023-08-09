@@ -19,7 +19,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
                     <mat-hint align="end">{{formGroup.get('comment')!.value.length}}/255</mat-hint>
                 </mat-form-field>
 
-                <div class="stars-container">
+                <div class="stars-container mt-3">
                     <ngx-stars 
                     color="yellow"
                     [initialStars]="formGroup.get('punctuation')!.value"

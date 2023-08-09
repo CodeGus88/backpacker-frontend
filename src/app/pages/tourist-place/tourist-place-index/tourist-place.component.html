@@ -54,7 +54,6 @@
                                 <mat-card-subtitle class="mb-2">Puntuación: {{item.rating??0}}</mat-card-subtitle>
                             </mat-card-header>
                             <div class="img-text-container">
-                                <!-- class="card-img-top img-ratio" -->
                                 <img mat-card-image [src]="getImageUrl(item.uuid, item.imageIcon)"
                                     onerror="this.src= 'assets/images/default-image.jpg'" alt="ImageIcon"
                                     alt="Photo of a Shiba Inu" class="img-ratio btn-pointer"
@@ -76,7 +75,6 @@
                         </mat-card>
                     </mat-grid-tile>
                 </mat-grid-list>
-                
             </div>
         </mat-card-content>
 

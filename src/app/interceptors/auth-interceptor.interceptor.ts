@@ -43,7 +43,6 @@ export class AuthInterceptor implements HttpInterceptor {
         return throwError(() => err);
       }
     }));
-
   }
 
   private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {

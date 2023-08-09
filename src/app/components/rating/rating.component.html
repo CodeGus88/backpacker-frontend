@@ -1,10 +1,10 @@
 <div class="container ms-0 me-0 mb-3">
     <div class="row justify-content-between">
-        <div class="col-6 containerx">
-            <span class="h3">{{ratingDto.punctuation}}<i class="fa-solid fa-star ms-1"></i></span>
-            <span class="h6 me-2">{{ratingDto.population}}<i class="fa-solid fa-people-group ms-1"></i></span>
+        <div class="col-6 containerx" *ngIf="ratingDto.population! > 0">
+            <span class="fw-medium">{{ratingDto.punctuation}} <i class="fa-solid fa-star"></i> </span>
+            <span class="fw-light bs-tertiary-color ms-2">{{ratingDto.population}} <i class="fa-solid fa-people-group"></i></span>
         </div>
-        <button class="col-6 containerx" mat-icon-button (click)="openFormDialog()"
+        <button class="col-6 containerx ms-auto" mat-icon-button (click)="openFormDialog()"
             *ngIf="isPermited(undefined, 'CREATE')">
             <mat-icon>add_comment</mat-icon>
         </button>
@@ -52,59 +52,3 @@
         </div>
     </mat-card-actions>
 </mat-card>
-
-
-<!-- <div class="container p-0">
-    <div class="container ms-0 me-0">
-        <div class="row justify-content-between">
-            <div class="col-6 containerx">
-                <span class="h3">{{ratingDto.punctuation}}<i class="fa-solid fa-star ms-1"></i></span>
-                <span class="h6 me-2">{{ratingDto.population}}<i class="fa-solid fa-people-group ms-1"></i></span>
-            </div>
-            <button class="col-6 containerx" mat-icon-button (click)="openFormDialog()"
-                *ngIf="isPermited(undefined, 'CREATE')">
-                <mat-icon>add_comment</mat-icon>
-            </button>
-        </div>
-    </div>
-    <div class="container bg-light bg-gradient rounded pt-2 pb-2 mb-1" *ngFor="let item of ratingDto?.items">
-        <div class="d-flex justify-content-between">
-            <div class="container-fluid">
-                <div class="row vertical-center">
-                    <div class="col-auto text-center m-0 p-0">
-                        <i class="fa-solid fa-address-card fa-2xl"></i>
-                    </div>
-                    <div class="col-auto text-start ms-2 p-0">
-                        <div class="row-12 m-0 p-0">
-                            <b class="ms-1">{{item.name}}</b><br>
-                        </div>
-                        <div class="row-12 m-0 p-0">
-                            <small>{{item.email}}</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex">
-                <ngx-stars [readonly]="true" [size]="1" [maxStars]="5" [initialStars]="item.punctuation??0"></ngx-stars>
-            </div>
-        </div>
-        <p class="text-justify">{{item.comment}}</p>
-        <div class="position-relative">
-            <div class="position-absolute bottom-0 end-0 btn-group-sm" role="group"
-                aria-label="Basic mixed styles example">
-                <button type="button" mat-icon-button 
-                    (click)="openFormDialog(item)" 
-                    *ngIf="isPermited(item.username!);"
-                    color="accent">
-                    <mat-icon>edit_note</mat-icon>
-                </button>
-                <button type="submit" mat-icon-button 
-                    (click)="deleteByUuid(item.uuid!)" 
-                    *ngIf="isPermited(item.username!, 'DELETE');"
-                    color="warn">
-                    <mat-icon>delete</mat-icon>
-                </button>
-            </div>
-        </div>
-    </div>
-</div> -->
