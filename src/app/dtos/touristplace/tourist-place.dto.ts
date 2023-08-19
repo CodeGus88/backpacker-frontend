@@ -1,6 +1,5 @@
 import { AddressDto } from "../address/address.dto";
 import { Category } from "../category/category.dto";
-import { FileDto } from "../file/file.dto";
 
 export class TouristPlaceDto{
     uuid?: String;
@@ -13,6 +12,5 @@ export class TouristPlaceDto{
     createdAt?: Date;
     updatedAt?: Date;
     categories?: Category[] = [];
-    files: FileDto[] = [];
     addresses: AddressDto[] = [];
 }

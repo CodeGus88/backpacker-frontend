@@ -25,20 +25,13 @@
               "src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/deeppurple-amber.css",
               "node_modules/ol/ol.css",
-              "src/styles.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "@fortawesome/fontawesome-free/css/all.min.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "src/styles.css"
             ],
             
-            "scripts": [
-              "@popperjs/core/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "@fortawesome/fontawesome-free/js/all.min.js"
-            ],
+            "scripts": [],
             "allowedCommonJsDependencies": [
-              "sweetalert2",
               "rbush"
             ]
           },
@@ -106,6 +99,7 @@
               "src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/pink-bluegrey.css",
               "node_modules/ol/ol.css",
               "src/styles.css"
             ],

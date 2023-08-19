@@ -1,87 +1,81 @@
-<div class="container mt-3 mb-5">
-  <div class="card">
-    <div class="card-header text-bg-secondary d-flex justify-content-between align-middle">
-      <div class="mt-auto mb-auto">
-        <button class="btn btn-secondary" (click)="ngBack()"><i class="fa-solid fa-arrow-left"></i></button>
-        <b class="ms-1">DETALLES</b>
-      </div>
-      <div class="mt-auto mb-auto">
-        <button class="btn btn-secondary btn-sm" (click)="deleteByUuid(tpDto.uuid)"><i
-            class="fa-solid fa-trash-can"></i></button>
-        <a class="btn btn-secondary btn-sm" routerLink="/touristplaces/edit/{{tpDto.uuid}}"><i
-            class="fa-regular fa-pen-to-square"></i></a>
-      </div>
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="p-0">
+    <button mat-icon-button (click)="backHistory()" class="me-3">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="d-block">
+        <div class="secondary-toolbar-title mb-0">Lugar turístico</div>
+        <div class="secondary-toolbar-subtitle">{{tpDto.name}}</div>
     </div>
-    <div class="card-body">
+    <span class="sub-menu-spacer"></span>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menu" *ngIf="isAdmin">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="redirectToEdit()">
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
+      </button>
+      <button mat-menu-item (click)="deleteByUuid(tpDto.uuid)">
+        <mat-icon>delete</mat-icon>
+        <span>Eliminar</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="container mt-3 mb-5">
+  <mat-card>
+    <mat-card-header>
+      <mat-grid-list [cols]="gridCols" [rowHeight]="ratio" class="w-100">
+        <mat-grid-tile class="rounded" style="background-color: gainsboro;">
+          <img [src]="imgUrl" class="w-100 btn p-0" alt="principal image" onerror="this.src= 'assets/images/default-image.jpg'"
+            (click)="openGallery()">
+        </mat-grid-tile>
+
+        <mat-grid-tile class="rounded">
+          <div class="border border-1 full-content data-container">
+            <div class="container-bg w-100">
+              <div class="principal-text w-100">
+                <h1 class="h1 text-center mt-2 mb-2">
+                  {{tpDto.name}}
+                </h1> 
+                <div class="text-center">
+                  <button type="button" class="btn btn-light category-button me-1"
+                    *ngFor="let category of tpDto.categories" #tooltip="matTooltip"
+                    matTooltip="{{category.description}}" matTooltipPosition="below" matTooltipHideDelay="200"
+                    aria-label="Button that displays a tooltip that hides when scrolled out of the container">{{category.name}}</button>
+                </div>
+                <div class="container in-line mb-5">
+                  <p class="text-center mt-2 resume-resume">
+                    <i class="fa-solid fa-quote-left me-1"></i>
+                    <i>{{tpDto.resume?tpDto.resume:'undefined'}}</i>
+                    <i class="fa-solid fa-quote-right ms-1"></i>
+                  </p>
+                </div>
+                <div class="cover-options">
+                  <div class="row">
+                    <div class="col p-0 ps-1">
+                      <button mat-mini-fab color="" class="mb-2" (click)="openGallery()">
+                        <mat-icon>collections</mat-icon>
+                      </button>
+                    </div>
+                    <div class="col p-0 ps-1">
+                      <p class="btn btn-light">
+                        <small class="text-truncate fw-lighter">{{punctuation}} <i class="fa-solid fa-star"></i></small>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-card-header>
+
+    <mat-card-content>
       <div class="container p-0">
-        <div class="row ps-2 pe-2">
-
-          <div class="col-sm-12 col-md-6 border border-1 p-0 rounded bg-simple-linear">
-            <div id="carouselControls" class="carousel slide align-middle" data-bs-ride="carousel">
-              <div class="carousel-inner rounded">
-                <div [ngClass]="{'carousel-item': true, 'active': tpDto.files.length == 0}" *ngIf="tpDto.imageIcon">
-                  <img [src]="getImageUrl(tpDto.imageIcon)" class="d-block w-100 rounded" alt="image"
-                    (click)="imgViewer()" type="button" data-bs-toggle="modal" data-bs-target="#imageViewer"
-                    type="button">
-                </div>
-                <div [ngClass]="{'carousel-item':true, 'active': (i == 0)}"
-                  *ngFor="let item of tpDto.files; let i = index">
-                  <img [src]="getImageUrl(item.file)" class="d-block w-100 rounded" alt="image"
-                    (click)="imgViewer(item)" data-bs-toggle="modal" data-bs-target="#imageViewer" type="button">
-                </div>
-                <div class="carousel-item active" *ngIf="tpDto.files.length == 0 && !tpDto.imageIcon">
-                  <img [src]="getDefaultImgUrl()" class="d-block w-100 rounded" alt="image">
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls"
-                data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselControls"
-                data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
-            </div>
-          </div>
-          
-          <div class="col-sm-12 col-md-6 d-flex border border-1 pt-2 bg-simple-linear rounded">
-            <div class="container-flex data-container align-middle col-12">
-              <h1 class="h1 text-center mt-2 mb-2">
-                {{tpDto.name}}
-              </h1>
-              <div class="text-center">
-                <button type="button" class="btn btn-light category-button me-1"
-                  (click)="showInfo(category.description, category.name)"
-                  *ngFor="let category of tpDto.categories">{{category.name}}</button>
-              </div>
-              <div class="container in-line mb-5">
-                <p class="text-center mt-2">
-                  <i class="fa-solid fa-quote-left me-1"></i>
-                  <i>{{tpDto.resume?tpDto.resume:'undefined'}}</i>
-                  <i class="fa-solid fa-quote-right ms-1"></i>
-                </p>
-              </div>
-              <div class="cover-options">
-                <div class="row justify-content-center">
-                  <div class="col p-0 ps-1">
-                    <button type="button" class="btn btn-outline-success rounded-circle" data-bs-toggle="modal"
-                      data-bs-target="#galeryModal">
-                      <i class="fa-regular fa-images"></i>
-                    </button>
-                  </div>
-                  <div class="col p-0 ps-1">
-                    <a href="/touristplaces/view/{{uuid}}#ratingSection" class="btn btn-light">
-                      <small class="text-truncate fw-lighter">{{punctuation}} <i class="fa-solid fa-star"></i></small>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="container mt-3">
           <div class="row">
             <h2 class="h2 p-0">Descripción</h2>
@@ -89,23 +83,22 @@
             </div>
           </div>
         </div>
-
-        <div class="container mt-3" *ngIf="tpDto.addresses.length > 0" >
+        <div class="container mt-3" *ngIf="tpDto.addresses.length > 0">
           <div class="row">
             <h2 class="h2 p-0">Direcciones</h2>
             <app-address-read-only [addresses]="tpDto.addresses" class="p-0"></app-address-read-only>
           </div>
         </div>
-
+        <div class="container mt-3">
+          <div class="row">
+            <h2 class="h2 p-0">Punctuación</h2>
+            <app-rating [entityUuid]="uuid.toString()" [eRating]="eRating"
+              (punctuationEmiter)="refreshPunctuationEvent($event)"
+              (data)="refreshPunctuationEvent($event)"
+              class="p-0"></app-rating>
+          </div>
+        </div>
       </div>
-      <hr class="border border-primary border-3 opacity-75">
-      <app-rating [entityUuid]="uuid" [eRating]="eRating"
-        (punctuationEmiter)="refreshPunctuationEvent($event)"></app-rating>
-    </div>
-  </div>
+    </mat-card-content>
+  </mat-card>
 </div>
-
-<app-galery [eModule]="eModule" [eEntity]="eEntity" [entityUuid]="uuid" [files]="tpDto.files"
-  (changeListEvent)="changeListEvent($event)"></app-galery>
-
-<app-image-viewer [file]="clickedImg" [eEntity]="eEntity"></app-image-viewer>

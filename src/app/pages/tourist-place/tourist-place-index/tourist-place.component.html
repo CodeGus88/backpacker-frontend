@@ -1,79 +1,99 @@
-<div class="container mt-3">
-    <div class="card">
-        <div class="card-header">
-            <div class="row">
-                <div class="d-flex justify-content-between">
-                    <span class="h6">LUGARES TURÍSTICOS ({{paginate.totalElements}})</span>
-                    <a class="btn btn-success btn-sm" routerLink="/touristplaces/create">
-                        <i class="fa-solid fa-plus"></i> Crear</a>
+<mat-toolbar color="primary" class="m-0">
+    <mat-toolbar-row>
+        <span class="secondary-toolbar-title">Lugares turísticos</span>
+        <span class="secondary-toolbar-spacer"></span>
+        <button mat-icon-button aria-label="Add" *ngIf="isAdmin" (click)="redirectTo('touristplaces/create')">
+            <mat-icon>add_circle</mat-icon>
+        </button>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="container mt-3 mb-5">
+
+    <mat-card>
+        <mat-card-header class="row me-1">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="row">
+                    <mat-form-field class="col-12">
+                        <mat-label>Búsqueda</mat-label>
+                        <input matInput placeholder="Ingresa un texto para buscar" id="search">
+                    </mat-form-field>
+
                 </div>
             </div>
-            <div class="row mt-2">
-                <div class="col-md-8 col-sm-12 mt-2 mb-2">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar"
-                            aria-describedby="button-addon2" id="search">
-                        <label class="btn btn-outline-secondary" for="search" id="button-addon2"><i
-                                class="fa-solid fa-magnifying-glass"></i></label>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="row">
+                    <mat-form-field class="col-lg-8 col-md-8 col-sm-7">
+                        <mat-label>Orden</mat-label>
+                        <mat-select (selectionChange)="onLoadData()" [(ngModel)]="paginate.sort">
+                            <mat-option *ngFor="let option of options" [value]="option.value">
+                                {{option.viewValue}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div class="col-lg-4 col-md-4 col-sm-5">
+                        <mat-button-toggle-group [(ngModel)]="paginate.ascDesc" (change)="onLoadData()">
+                            <mat-button-toggle [value]="ASC" class="col-6"><i
+                                    class="material-icons">keyboard_double_arrow_up</i></mat-button-toggle>
+                            <mat-button-toggle [value]="DESC" class="col-6"><i
+                                    class="material-icons">keyboard_double_arrow_down</i></mat-button-toggle>
+                        </mat-button-toggle-group>
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-12 mt-2 mb-2">
-                    <div class="input-group">
-                        <select class="form-select" role="group" aria-label="Default select example"
-                            (change)="onLoadData()" [(ngModel)]="paginate.sort">
-                            <option value="name">Nombre</option>
-                            <option value="createdAt">Fecha de creación</option>
-                            <option value="rating,createdAt">Rating</option>
-                        </select>
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
-                            <input type="radio" class="btn-check" id="asc" autocomplete="off"
-                                [checked]="paginate.ascDesc==ASC?true:false" (change)="onLoadData()" [value]="ASC"
-                                [(ngModel)]="paginate.ascDesc" name="ascDesc">
-                            <label class="btn btn-outline-primary" for="asc"><i
-                                    class="fa-solid fa-arrow-down-short-wide"></i></label>
-                            <input type="radio" class="btn-check" id="desc" autocomplete="off"
-                                [checked]="paginate.ascDesc==DESC?true:false" (change)="onLoadData()" [value]="DESC"
-                                [(ngModel)]="paginate.ascDesc" name="ascDesc">
-                            <label class="btn btn-outline-primary" for="desc">
-                                <i class="fa-solid fa-arrow-up-short-wide"></i></label>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
-        <div class="container card-body">
-            <div class="text-center mt-3">
-                <pagination-controls (pageChange)="pageChangeEvent($event)"></pagination-controls>
-            </div>
-            <div class="container">
-                <div class="row mt-3">
-                    <div class="col d-flex justify-content-center mt-3 mb-3"
-                        *ngFor="let item of list | paginate: {itemsPerPage: paginate.size, currentPage: (paginate.page + 1), totalItems: paginate.totalElements}">
-                        <div class="card box-shadow d-flex justify-content-between" style="width: 18rem;">
+        </mat-card-header>
+
+        <mat-card-content>
+
+            <div class="row m-auto justify-content-between">
+                <mat-grid-list [cols]="gridCols" rowHeight="14:17">
+                    <mat-grid-tile  *ngFor="let item of list">
+                        <mat-card class="card-item" >
+                            <mat-card-header>
+                                <mat-card-title>{{item.name}}</mat-card-title>
+                                <mat-card-subtitle class="mb-2">Puntuación: {{item.rating??0}}</mat-card-subtitle>
+                            </mat-card-header>
                             <div class="img-text-container">
-                                <img class="card-img-top" [src]="getImageUrl(item.uuid, item.imageIcon)"
+                                <img mat-card-image [src]="getImageUrl(item.uuid, item.imageIcon)"
                                     onerror="this.src= 'assets/images/default-image.jpg'" alt="ImageIcon"
-                                    (click)="view(item.uuid)" type="button">
+                                    alt="Photo of a Shiba Inu" class="img-ratio btn-pointer"
+                                    (click)="redirectTo('touristplaces/'+item.uuid)">
                                 <div class="cover-text-right me-1">
                                     <div *ngFor="let category of getCategoryList(item.categories)">{{category}}</div>
                                 </div>
-                                <div class="cover-text-left ms-1">
-                                    <div>
-                                        <i class="fa-solid fa-star"></i> {{item.rating??0}}
-                                    </div>
+                                <div class="cover-text-left ms-1 d-flex">
+                                    <i class="material-icons" #tooltip="matTooltip" matTooltip="{{item.resume}}"
+                                        matTooltipPosition="below" matTooltipHideDelay="500"
+                                        aria-label="Button that displays a tooltip that hides when scrolled out of the container">public</i>
                                 </div>
                             </div>
-                            <div class="card-body" style="background-color: rgb(250, 250, 243);">
-                                <h5 class="card-title text-center title-resume" title="{{item.name}}">{{item.name}}</h5>
-                                <p class="card-text fw-lighter text-justify resume-resume">{{item.resume}}</p>
-                            </div>
-                        </div>
-                    </div>
+                            <mat-card-content>
+                                <div class="card-body">
+                                    <p class="card-text fw-lighter text-justify resume-resume mt-3">{{item.resume}}</p>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+            <div class="container d-flex align-items-center">
+                <div class="ms-auto">
+                    <label for="pageSelect" class="me-2"><small>Página:</small></label>
+                    <select [(ngModel)]="paginate.page" id="pageSelect" (change)="goToPageNumber()"
+                        class="paginator-select">
+                        <option [value]="i" *ngFor="let page of getPagesList(); let i = index" class="p-3 m-3">
+                            {{page}}</option>
+                    </select>
                 </div>
+                <mat-paginator #paginator class="demo-paginator me-auto" (page)="pageChanged($event)"
+                    [length]="paginate.totalElements" [pageSize]="paginate.size" [disabled]="false"
+                    [showFirstLastButtons]="true" [pageSizeOptions]="[4, 8, 16, 32, 64]" [hidePageSize]="false"
+                    [pageIndex]="paginate.page" aria-label="Select page">
+                </mat-paginator>
             </div>
-            <div class="text-center mt-3">
-                <pagination-controls (pageChange)="pageChangeEvent($event)"></pagination-controls>
-            </div>
-        </div>
-    </div>
+        </mat-card-actions>
+    </mat-card>
 </div>

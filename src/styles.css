@@ -2,3 +2,46 @@
 .text-justify{
     text-align: justify;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+/* Sirve para el fondo de los modals bootstrap, para que se parezca al de angular material*/
+.modal-backdrop.show {
+	opacity: 0.32;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+/* Para mostrar snackbar encima del modal de bootstrap */
+.cdk-overlay-container {
+z-index: 10000 !important;
+}
+
+/* items de las listas */
+.card-item{
+	max-width: 300px;
+}
+
+.card-header-image {
+	background-size: cover;
+}
+
+/* toolbar title */
+.secondary-toolbar-title{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+}
+
+.secondary-toolbar-subtitle{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+
+/* for rating stars */
+igc-rating::part(star) {
+    color: yellow;
+}
+
+igc-rating {
+    --gap: 10px;
+}

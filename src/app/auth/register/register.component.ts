@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserRequest } from '../models/user-request';
-import { ToastrService } from 'ngx-toastr';
+// import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-register',
@@ -18,7 +19,7 @@ export class RegisterComponent {
   constructor(
     private authService: AuthService, 
     private router: Router,
-    private toast: ToastrService
+    private matSnackBar: MatSnackBar
     ) {
     this.newUser = new UserRequest();
     this.newUser.roles = ['user'];
@@ -29,7 +30,8 @@ export class RegisterComponent {
       this.authService.register(this.newUser).subscribe(
         data => {
           console.log(data);
-          this.toast.success(data.message, "SUCCESS");
+          // this.toast.success(data.message, "SUCCESS");
+          this.matSnackBar.open(data.message, 'COMPLETO', {duration: 3000});
           this.router.navigate(['/login']);
         },
         e => {

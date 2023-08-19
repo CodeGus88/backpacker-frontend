@@ -1,34 +1,19 @@
-<div class="container mt-3 p-0" >
-    <div class="row justify-content-between d-flex">
-        <h2 class="h2 col" id="ratingSection">Calificaciones</h2>
-        <div class="col text-end ">
-            <span class="h6 me-2">{{ratingDto!.population}}<i class="fa-solid fa-people-group ms-1"></i></span>
-            <span class="h2">{{ratingDto!.punctuation}}<i class="fa-solid fa-star ms-1"></i></span>
+<div class="container ms-0 me-0 mb-3">
+    <div class="row justify-content-between">
+        <div class="col-6 containerx" *ngIf="ratingDto.population! > 0">
+            <span class="fw-medium">{{ratingDto.punctuation}} <i class="fa-solid fa-star"></i> </span>
+            <span class="fw-light bs-tertiary-color ms-2">{{ratingDto.population}} <i class="fa-solid fa-people-group"></i></span>
         </div>
+        <button class="col-6 containerx ms-auto" mat-icon-button (click)="openFormDialog()"
+            *ngIf="isPermited(undefined, 'CREATE')">
+            <mat-icon>add_comment</mat-icon>
+        </button>
     </div>
-    <div class="border-1 mt-2" *ngIf="ratingRequest">
-        <div class="form-floating p-0 mb-3">
-            <textarea class="form-control" placeholder="Leave a comment here" id="comment" name="comment"
-                [(ngModel)]="ratingRequest!.comment"></textarea>
-            <label for="floatingTextarea">Comentario</label>
-        </div>
-        <div class="mb-3 text-center">
-            <igc-rating value="{{ratingRequest!.punctuation}}" (igcChange)="ratingChanged($event)" min="1" max="5"
-                label="Puntuación">
-            </igc-rating>
-        </div>
-        <div class="mb-3">
-            <button class="btn btn-sm btn-success" (click)="create()" *ngIf="!editableItemUuid ; else edit">Enviar</button>
-            <ng-template #edit>
-                <button class="btn btn-sm btn-success" (click)="update()">Actualizar</button>
-            </ng-template>
-        </div>
-    </div>
-    <div class="text-success">
-        <hr>
-    </div>
-    <div class="container bg-light bg-gradient rounded pt-2 pb-2 mb-1" *ngFor="let item of ratingDto?.items">
-        <div class="d-flex justify-content-between">
+</div>
+
+<mat-card *ngFor="let item of ratingDto?.items" class="p-0 mb-3">
+    <mat-card-header>
+        <div class="d-flex justify-content-between w-100">
             <div class="container-fluid">
                 <div class="row vertical-center">
                     <div class="col-auto text-center m-0 p-0">
@@ -45,23 +30,25 @@
                 </div>
             </div>
             <div class="d-flex">
-                <div class="d-flex" *ngFor="let staron of getStarsValue(item.punctuation)">
-                    <i class="fa-solid fa-star fa-2xs" *ngIf="staron; else starof"></i>
-                    <ng-template #starof>
-                        <i class="fa-regular fa-star fa-2xs"></i>
-                    </ng-template>
-                </div>
+                <ngx-stars [readonly]="true" [size]="1" [maxStars]="5" [initialStars]="item.punctuation??0"></ngx-stars>
             </div>
         </div>
+    </mat-card-header>
+
+    <mat-card-content>
         <p class="text-justify">{{item.comment}}</p>
-        <div class="position-relative" >
-            <div class="position-absolute bottom-0 end-0 btn-group-sm" role="group"
-                aria-label="Basic mixed styles example">
-                <button type="button" class="btn btn-outline-warning" *ngIf="isPermited(item.username!);" (click)="showEdit(item, ratingDto!.entityUuid!)"><i class="fa-solid fa-pencil"></i></button>
-                <button type="button" class="btn btn-outline-danger" *ngIf="isPermited(item.username!, 'DELETE');" (click)="deleteByUuid(item.uuid!)">
-                    <i class="fa-regular fa-trash-can"></i>
-                </button>
-            </div>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="isPermited(item.username!) || isPermited(item.username!, 'DELETE')">
+        <div class="ms-auto">
+            <button type="button" mat-icon-button (click)="openFormDialog(item)" *ngIf="isPermited(item.username!);"
+                color="accent">
+                <mat-icon>edit_note</mat-icon>
+            </button>
+            <button type="submit" mat-icon-button (click)="deleteByUuid(item.uuid!)"
+                *ngIf="isPermited(item.username!, 'DELETE');" color="warn">
+                <mat-icon>delete</mat-icon>
+            </button>
         </div>
-    </div>
-</div>
+    </mat-card-actions>
+</mat-card>

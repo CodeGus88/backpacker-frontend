@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { Request } from 'src/app/dtos/touristplace/request.dto';
 import { TouristPlaceService } from 'src/app/services/tourist-place/tourist-place.service';
-import { ToastrService } from 'ngx-toastr';
-import { CategoryService } from 'src/app/services/categoriy/category.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CategoryService } from 'src/app/services/category/category.service';
 import { Category } from 'src/app/dtos/category/category.dto';
-import { IDropdownSettings } from 'ng-multiselect-dropdown';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-tourist-place-create',
@@ -13,78 +13,89 @@ import { IDropdownSettings } from 'ng-multiselect-dropdown';
 })
 export class TouristPlaceCreateComponent {
 
-  protected request: Request;
+  // protected request: Request;
+  protected title: string = "Nuevo";
   protected errors: any[];
   protected categories: Category[];
 
   // Multiselect
   protected dropdownList: any[] = [];
   protected selectedItems: any[] = [];
-  protected dropdownSettings: IDropdownSettings = {};
+
+  protected form = this.fb.group({
+    name: ['', [Validators.minLength(2), Validators.maxLength(35)]],
+    // imageIcon: [''],
+    isPublic: [false, []],
+    categories: [[], [Validators.required, this.multiSelectValidator]],
+    resume: ['', [Validators.minLength(10), Validators.maxLength(500)]],
+    keywords: ['', [Validators.minLength(1), Validators.maxLength(50)]],
+    description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(10000)]]
+  });
 
   constructor(
     private touristPlaceService: TouristPlaceService,
-    private toast: ToastrService,
-    private categoryService: CategoryService
+    private snackBar: MatSnackBar,
+    private categoryService: CategoryService,
+    private fb: FormBuilder
   ) {
-    this.request = new Request();
-    this.request.isPublic = true;
     this.errors = [];
     this.categories = [];
   }
+
+  multiSelectValidator(control: FormControl) {
+    const value = control.value;
+    if (!Array.isArray(value) || value.length === 0 || value.length > 3)
+      return { multiSelect: true };
+    return null;
+  }
+
   ngOnInit() {
     this.categoryService.findAll().subscribe({
       next: data => {
-        this.multiSelectInit(data);
         this.categories = data;
       },
       error: e => {
-        this.toast.error("No se pudieron cargar las categorías", "ERROR");
+        this.snackBar.open("No se pudieron cargar las categorías", "ERROR", {duration: 3000})
         console.log(e.message);
       }
     });
-
-  }
-
-  multiSelectInit(data: any){
-    console.log(data);
-    this.dropdownList = data;
-    this.dropdownSettings = {
-      singleSelection: false,
-      idField: 'id',
-      textField: 'name',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 10,
-      allowSearchFilter: true,
-      limitSelection: 3
-    };
-  }
-
-  onItemSelect(item: any) {
-    console.log(item);
-    console.log(this.selectedItems);
   }
 
   create(): void {
-    let selectedCategories = this.selectedItems.map(e => {return {id: e.id}});
-    this.request.categories = selectedCategories;
-    console.log(this.request);
-    this.touristPlaceService.create(this.request).subscribe({
+      this.touristPlaceService.create(this.form.value).subscribe({
       next: data => {
         console.log(data);
+        this.snackBar.open("Se creó correctamente", "OK", {duration: 3000})
         window.history.back();
-        this.toast.success("Se guardó correctamente", "EXITO");
       },
       error: e => {
         this.errors = e.error.errors;
-        this.toast.error(e.error.error, "ERROR");
+        console.log(e);
+        this.snackBar.open("Algo salió mal", "ERROR");
       }
     });
   }
 
-  ngBack(){
+  backHistory(){
     window.history.back();
+  }
+
+  onSubmit(){
+    this.create();
+  }
+
+  // para el select multiple
+  getLength(){
+    let array = this.form.controls.categories.value??[];
+    return array.length;
+  }
+
+  getArray(): any[]{
+    return this.form.controls.categories.value??[];
+  }
+
+  existInArray(option: any){
+    return this.getArray().includes(option);
   }
   
 }

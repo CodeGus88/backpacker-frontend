@@ -1,0 +1,8 @@
+@import '~@angular/material/theming';
+
+.candy-carousel {
+  // Obtener el tono predeterminado para una paleta.
+  color: mat-color($primary);
+  // Obtener un tono específico de una paleta.
+  background-color: mat-color($accent, 400);
+}

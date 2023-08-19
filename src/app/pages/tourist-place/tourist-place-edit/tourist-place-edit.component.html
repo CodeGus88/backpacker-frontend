@@ -1,106 +1,139 @@
-<div class="container mt-3  mb-5">
-    <div class="card">
-        <div class="card-header text-bg-secondary d-flex justify-content-between">
-            <div>
-                <button class="btn btn-secondary" (click)="backHistory()"><i class="fa-solid fa-arrow-left"></i></button>
-                <b class="ms-1">Modificar</b>
-            </div>
-            
-        </div>
-        <div class="card-body">
-            <form>
-                <div class="row">
-                    <div class="mb-3 col-sm-12 col-md-6">
-                        <label for="name" class="form-label">Nombre del lugar</label>
-                        <input type="text" class="form-control" id="name" aria-describedby="placeName"
-                            placeholder="Ingresa el nobre del lugar turístico" [(ngModel)]="request.name" name="name">
+<mat-toolbar color="primary" class="m-0">
+    <mat-toolbar-row>
+        <button mat-icon-button (click)="backHistory()" class="me-3">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="secondary-toolbar-title">Modificar</span>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="container mt-3 mb-5">
+    <mat-card class="mb-3">
+        <mat-card-header>
+            <mat-card-title class="mb-3">Información básica</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form class="form-container" [formGroup]="form" (ngSubmit)="update()">
+                <div class="row ">
+                    <div class="col-sm-12 col-md-6 mb-2">
+                        <mat-form-field class="full-width">
+                            <mat-label>Nombre {{form.get('name')!.value!.length}}/35</mat-label>
+                            <input matInput placeholder="Nombre del lugar" formControlName="name" required
+                                maxlength="35" autocomplete="off" />
+                            <mat-error>Min 2, Max 35</mat-error>
+                        </mat-form-field>
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
-                        <label for="category_id" class="form-label">Categorías</label>
-                        <ng-multiselect-dropdown [placeholder]="'Selecciona hasta 3 opciones'"
-                            [settings]="dropdownSettings" [data]="dropdownList" [(ngModel)]="selectedItems" name="categories">
-                        </ng-multiselect-dropdown>
+                    <div class="col-sm-12 col-md-6 mb-2">
+                        <mat-form-field class="full-width">
+                            <mat-label>Categorías {{(form.get('categories')!.value??[]).length}}/3</mat-label>
+                            <mat-select formControlName="categories" multiple>
+                                <mat-option *ngFor="let category of categories" 
+                                    [value]="category.id"
+                                    [disabled]="(form.get('categories')!.value??[]).length >= 3 && !((form.get('categories')!.value??[]).includes(category.id))"
+                                    >
+                                    <div class="d-flex justify-content-between align-middle"
+                                        #tooltip="matTooltip"
+                                        matTooltip="{{category.description}}"
+                                        matTooltipPosition="below"
+                                        [matTooltipShowDelay]="1000"
+                                        matTooltipHideDelay="200"
+                                        aria-label="Button that displays a tooltip that hides when scrolled out of the container"
+                                    >
+                                        {{category.name}}
+                                    </div>
+                                </mat-option>
+                            </mat-select>
+                            <mat-error>Selecciona al menos una categoría</mat-error>
+                        </mat-form-field>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="mb-3 col-sm-12 col-md-6">
-                        <label for="resume" class="form-label">Resumen</label>
-                        <input type="text" class="form-control" id="resume" aria-describedby="placResume"
-                            placeholder="Ingrese un breve resumen sobre el lugar (sumario)" [(ngModel)]="request.resume"
-                            name="resume">
-                    </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
-                        <label for="keywords" class="form-label">Palabras clave</label>
-                        <input type="text" class="form-control" id="keywords" aria-describedby="placResume"
-                            placeholder="Ingresa palabras claves para encontrarlo con el buscador"
-                            [(ngModel)]="request.keywords" name="keywords" maxlength="50">
-                    </div>
+                <div class="mb-2">
+                    <mat-form-field class="full-width">
+                        <mat-label>Resumen {{form.get('resume')!.value!.length}}/500</mat-label>
+                        <input matInput placeholder="Resumen" formControlName="resume" required maxlength="500"
+                            autocomplete="off" />
+                        <mat-error>Min 10, Max 500</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="mb-2">
+                    <mat-form-field class="full-width">
+                        <mat-label>Palabras clave {{form.get('keywords')!.value!.length}}/50</mat-label>
+                        <input matInput placeholder="Palabras clave" formControlName="keywords" required maxlength="50"
+                            autocomplete="off" />
+                        <mat-error>Min 1, Max 50</mat-error>
+                    </mat-form-field>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label" for="description">Descripción</label>
-                    <textarea class="form-control" placeholder="Descripción detallada del lugar" id="description"
-                        [(ngModel)]="request.description" name="description" rows="10"></textarea>
+                    <mat-form-field class="full-width">
+                        <mat-label>Descripción {{form.get('description')!.value!.length}}/10000</mat-label>
+                        <textarea matInput placeholder="Descripción" formControlName="description"
+                            autocomplete="off" rows="5" minlength="10" maxlength="10000"></textarea>
+                        <mat-error>Min 10, Max 10000</mat-error>
+                    </mat-form-field>
                 </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="isPublic" [(ngModel)]="request.isPublic"
-                        name="isPublic">
-                    <label class="form-check-label" for="isPublic">Público</label>
-                </div>
-
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errors.length > 0">
-                    <p *ngFor="let error of errors">
-                        <b>{{error.field + ": "}}</b> {{error.defaultMessage}}
-                    </p>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <button class="btn btn-sm btn-secondary" (click)="update()"><i class="fa-solid fa-circle-check"></i>
-                    Actualizar datos</button>
-                <hr>
-                <div class="container mt-3 p-0">
-                    <div class="d-flex justify-content-between">
-                        <label class="form-label">Carátula:</label>
-                        <button class="btn btn-sm" (click)="deleteImageIcon()"><i class="fa-regular fa-trash-can"></i></button>
-                    </div>
-                    <div class="container text-center col-12 mb-3">
-                        <img [src]="imageIconUrl" alt="imageIcon" class="rounded">
-                    </div>
-                    <div class="col-md-12">
-                        <input class="form-control" type="file" accept="image/*" (change)="onFileChange($event)" 
-                        [(ngModel)]="imageSelector" name="imageSelector">
-                    </div>
-                    <div class="mt-2 row">
-                        <div class="col-md-6" *ngIf="imageSelector">
-                            <label class="form-label col-12">Imagen seleccionada</label>
-                            <image-cropper [imageChangedEvent]="imgChangeEvt" [maintainAspectRatio]="true"
-                                [aspectRatio]="4 / 3" [resizeToWidth]="256" format="png"
-                                (imageCropped)="cropImg($event)">
-                            </image-cropper>
+                <div class="mb-3">
+                    <mat-checkbox formControlName="isPublic">
+                        <div class="vertical-center">
+                            Público
+                            <i class="material-icons ms-1" *ngIf="form.get('isPublic')!.value">public</i>
+                            <i class="material-icons ms-1" *ngIf="!form.get('isPublic')!.value">public_off</i>
                         </div>
-                        <div class="col-md-6" *ngIf="imageSelector">
-                            <label class="form-label col-12">Pre-visualización</label>
-                            <img class="col-12 m-1" [src]="cropImgPreview"/>
-                        </div>
-                    </div>
+                    </mat-checkbox>
                 </div>
-                <button class="btn btn-sm btn-secondary mt-3" (click)="upload()"><i
-                        class="fa-solid fa-circle-check"></i> Actualizar carátula</button>
+                <button mat-raised-button type="submit" [disabled]="form.invalid">Actualizar</button>
             </form>
+        </mat-card-content>
+    </mat-card>
 
-            <!-- addresses -->
-            <hr>
-            <div class="container p-0 mb-3">Direcciones:</div>
+    <mat-card class="mb-2">
+        <mat-card-header>
+            <mat-card-title class="mb-3">Carátura</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
             <div class="container p-0">
-                <app-address 
-                [addresses]="tpDto.addresses"
-                [eEntity]="eEntity.TP_ADDRESS"
-                [entityUuid]="tpDto.uuid + ''"
-                ></app-address>
+                <div class="containerx text-center mb-3">
+                    <button mat-icon-button aria-label="Eliminar" color="accent"
+                    (click)="deleteImageIcon()" *ngIf="tpDto.imageIcon">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <img [src]="imageIconUrl" alt="imageIcon" class="rounded">
+                </div>
+                <button type="button" mat-raised-button (click)="fileInput.click()">Elegir archivo</button>
+                <input hidden (change)="onFileChange($event)" [(ngModel)]="imageSelector" 
+                #fileInput type="file" 
+                id="file" accept="image/*">
+
+                <div class="row mt-3" *ngIf="imgChangeEvt">
+                    <div class="col-md-6">
+                        <label class="form-label col-12 ms-2">Imagen seleccionada</label>
+                        <image-cropper [imageChangedEvent]="imgChangeEvt" [maintainAspectRatio]="true"
+                            [aspectRatio]="16 / 9" [resizeToWidth]="640" format="png"
+                            (imageCropped)="cropImg($event)">
+                        </image-cropper>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label col-12 ms-2">Pre-visualización</label>
+                        <img class="col-12 m-1" [src]="cropImgPreview"/>
+                    </div>
+                </div>
             </div>
+            <div class="mt-2" *ngIf="imgChangeEvt">
+                <button mat-raised-button (click)="onFileChange(null)" type="button" *ngIf="imageSelector">Cancelar</button>
+                <button mat-raised-button (click)="upload()" type="submit" *ngIf="imageSelector" class="ms-md-2">Actualizar carátula</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
 
-            <!-- fin addresses -->
-        </div>
-    </div>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title class="mb-3">Direcciones</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <app-address 
+            [addresses]="tpDto.addresses"
+            [eEntity]="eEntity.TP_ADDRESS"
+            [entityUuid]="tpDto.uuid + ''"
+            ></app-address>
+        </mat-card-content>
+    </mat-card>
 </div>
-
-
-

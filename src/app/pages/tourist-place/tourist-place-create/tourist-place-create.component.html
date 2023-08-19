@@ -1,56 +1,90 @@
-<div class="container mt-3  ">
-    <div class="card">
-        <div class="card-header text-bg-secondary">
-            <button class="btn btn-secondary" (click)="ngBack()"><i class="fa-solid fa-arrow-left"></i></button>
-            <b class="ms-1">Nuevo lugar turístico</b>
-        </div>
-        <div class="card-body">
-            <form>
+<mat-toolbar color="primary" class="m-0">
+    <mat-toolbar-row>
+        <button mat-icon-button (click)="backHistory()" class="me-3">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="secondary-toolbar-title">{{title}}</span>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="container mt-3 mb-5">
+    <mat-card>
+        <mat-card-content>
+            <form class="form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="row">
-                    <div class="mb-3 col-sm-12 col-md-6">
-                        <label for="name" class="form-label">Nombre del lugar</label>
-                        <input type="text" class="form-control" id="name" aria-describedby="placeName"
-                            placeholder="Ingresa el nobre del lugar turístico" [(ngModel)]="request.name" name="name">
+                    <div class="col-sm-12 col-md-6 mb-2">
+                        <mat-form-field class="full-width">
+                            <mat-label>Nombre {{form.get('name')!.value!.length}}/35</mat-label>
+                            <input matInput placeholder="Nombre del lugar" formControlName="name" required
+                                maxlength="35" autocomplete="off" />
+                            <mat-error>Min 2, Max 35</mat-error>
+                        </mat-form-field>
                     </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
-                        <label for="category_id" class="form-label">Categoría</label>
-                        <ng-multiselect-dropdown [placeholder]="'Selecciona hasta 3 opciones'" [settings]="dropdownSettings"
-                            [data]="dropdownList" (onSelect)="onItemSelect($event)" [(ngModel)]="selectedItems" name="categories">
-                        </ng-multiselect-dropdown>
+                    <div class="col-sm-12 col-md-6 mb-2">
+                        <mat-form-field class="full-width">
+                            <mat-label>Categorías {{getLength()}}/3</mat-label>
+                            <mat-select formControlName="categories" multiple>
+                                <mat-option *ngFor="let category of categories" 
+                                    [value]="category.id"
+                                    
+                                    [disabled]="getLength() >= 3 && !existInArray(category.id)"
+                                    >
+                                    <div class="d-flex justify-content-between align-middle"
+                                        #tooltip="matTooltip"
+                                        matTooltip="{{category.description}}"
+                                        matTooltipPosition="below"
+                                        matTooltipShowDelay="1000"
+                                        matTooltipHideDelay="200"
+                                        aria-label="Button that displays a tooltip that hides when scrolled out of the container"
+                                    >
+                                        {{category.name}}
+                                    </div>
+                                </mat-option>
+                            </mat-select>
+                            <mat-error>Selecciona al menos una categoría</mat-error>
+                        </mat-form-field>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="mb-3 col-sm-12 col-md-6">
-                        <label for="resume" class="form-label">Resumen</label>
-                        <input type="text" class="form-control" id="resume" aria-describedby="placResume"
-                            placeholder="Ingrese un breve resumen sobre el lugar (sumario)" [(ngModel)]="request.resume"
-                            name="resume">
-                    </div>
-                    <div class="mb-3 col-sm-12 col-md-6">
-                        <label for="keywords" class="form-label">Palabras clave</label>
-                        <input type="text" class="form-control" id="keywords" aria-describedby="placResume"
-                            placeholder="Ingresa palabras claves para encontrarlo con el buscador"
-                            [(ngModel)]="request.keywords" name="keywords">
-                    </div>
+                <div class="mb-2">
+                    <mat-form-field class="full-width">
+                        <mat-label>Resumen {{form.get('resume')!.value!.length}}/500</mat-label>
+                        <input matInput placeholder="Resumen" formControlName="resume" required maxlength="500"
+                            autocomplete="off" />
+                        <mat-error>Min 10, Max 500</mat-error>
+                    </mat-form-field>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label" for="description">Descripción</label>
-                    <textarea class="form-control" placeholder="Descripción detallada del lugar" id="description"
-                        rows="10" [(ngModel)]="request.description" name="description"></textarea>
+                <div class="mb-2">
+                    <mat-form-field class="full-width">
+                        <mat-label>Palabras clave {{form.get('keywords')!.value!.length}}/50</mat-label>
+                        <input matInput placeholder="Palabras clave" formControlName="keywords" required maxlength="50"
+                            autocomplete="off" />
+                        <mat-error>Min 1, Max 50</mat-error>
+                    </mat-form-field>
                 </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="isPublic" [(ngModel)]="request.isPublic"
-                        name="isPublic">
-                    <label class="form-check-label" for="isPublic">Público</label>
+                <div class="mb-2">
+                    <mat-form-field class="full-width">
+                        <mat-label>Descripción {{form.get('description')!.value!.length}}/10000</mat-label>
+                        <textarea matInput placeholder="Descripción" formControlName="description"
+                            autocomplete="off" rows="5" minlength="10" maxlength="10000"></textarea>
+                        <mat-error>Min 10, Max 10000</mat-error>
+                    </mat-form-field>
                 </div>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errors.length > 0">
-                    <p *ngFor="let error of errors">
-                        <b>{{error.field + ": "}}</b> {{error.defaultMessage}}
-                    </p>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="mb-2">
+                    <mat-checkbox formControlName="isPublic">
+                        <div class="vertical-center">
+                            Público
+                            <i class="material-icons ms-1" *ngIf="form.get('isPublic')!.value">public</i>
+                            <i class="material-icons ms-1" *ngIf="!form.get('isPublic')!.value">public_off</i>
+                        </div>
+                    </mat-checkbox>
                 </div>
-                <button class="btn btn-primary" (click)="create()">Crear</button>
+                <div class="mb-2">
+                    <button mat-raised-button (click)="backHistory()" type="button">Cancelar</button>
+                    <button mat-raised-button color="primary" class="ms-2" type="submit"
+                        [disabled]="form.invalid">Crear</button>
+                </div>
             </form>
-        </div>
-    </div>
+        </mat-card-content>
+    </mat-card>
+
 </div>

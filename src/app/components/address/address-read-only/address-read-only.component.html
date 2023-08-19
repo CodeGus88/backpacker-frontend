@@ -1,15 +1,23 @@
-<div class="bg-light bg-gradient mt-1 rounded p-2 title-border" *ngFor="let item of addresses">
-  <small class="text-break fw-semibold me-1">{{item.title}}:</small>
-  <small class="fw-light">
-    {{item.continent}}, {{item.country}},
+<ul class="mb-3">
+  <li *ngFor="let item of addresses" class="mt-3">
+    <b>{{item.title}}:</b> {{item.continent}}, {{item.country}},
     {{item.state}}, {{item.county}}:
-    {{item.address}}
-  </small>
-  <a class="btn btn-sm btn-outline-secondary" [href]="getGoogleLink(item)" target="_blank">
-    <i class="fa-solid fa-map-location-dot"></i> Google Maps
-  </a>
-  <!-- <a class="btn btn-sm btn-outline-secondary" [href]="getGoogleEarth(item)" target="_blank">
-    <i class="fa-solid fa-map-location-dot"></i> Google Earth
-  </a> -->
-</div>
-<div id="viewMap" class="map mt-1 p-0"></div>
+    {{item.address}}. <b><a class="custom-link" [href]="getGoogleLink(item)" target="_blank">
+      Abrir en Google Maps
+    </a></b>
+  </li>
+</ul>
+
+<mat-accordion>
+  <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Mapa
+      </mat-panel-title>
+      <mat-panel-description>
+        Ubicacion de las referecnias
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div id="viewMap" class="map mt-1 p-0"></div>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -8,27 +8,24 @@ import { TouristPlaceComponent } from './pages/tourist-place/tourist-place-index
 import { TouristPlaceViewComponent } from './pages/tourist-place/tourist-place-view/tourist-place-view.component';
 import { TouristPlaceCreateComponent } from './pages/tourist-place/tourist-place-create/tourist-place-create.component';
 import { TouristPlaceEditComponent } from './pages/tourist-place/tourist-place-edit/tourist-place-edit.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'touristplaces', component: TouristPlaceComponent },
-  { path: 'touristplaces/view/:uuid', component: TouristPlaceViewComponent },
   { path: 'touristplaces/create', component: TouristPlaceCreateComponent },
+  { path: 'touristplaces/:uuid', component: TouristPlaceViewComponent },
   { path: 'touristplaces/edit/:uuid', component: TouristPlaceEditComponent },
-  { path: '**', redirectTo: '', pathMatch: 'full'}
+  { path: '**', component: NotFoundComponent}
 ];
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes, /**{
-      onSameUrlNavigation: "ignore",
-      anchorScrolling:'enabled',
-      scrollPositionRestoration: 'enabled'
-    }*/)
+    RouterModule.forRoot(routes)
   ],
   exports: [
     RouterModule

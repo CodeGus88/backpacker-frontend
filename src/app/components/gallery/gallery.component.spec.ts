@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ImageViewerComponent } from './image-viewer.component';
+import { GaleryComponent } from './gallery.component';
 
-describe('ImageViewerComponent', () => {
-  let component: ImageViewerComponent;
-  let fixture: ComponentFixture<ImageViewerComponent>;
+describe('GaleryComponent', () => {
+  let component: GaleryComponent;
+  let fixture: ComponentFixture<GaleryComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ImageViewerComponent ]
+      declarations: [ GaleryComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ImageViewerComponent);
+    fixture = TestBed.createComponent(GaleryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

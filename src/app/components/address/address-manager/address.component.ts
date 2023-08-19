@@ -1,4 +1,3 @@
-
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Collection, Feature } from 'ol';
 import Map from 'ol/Map'; import View from 'ol/View';
@@ -11,12 +10,14 @@ import OSM from 'ol/source/OSM';
 import VectorSource from 'ol/source/Vector';
 import { MapService } from 'src/app/services/map/map.service';
 import { AddressRequest } from '../../../dtos/address/address-request.dto';
-import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddressService } from 'src/app/services/address/address.service';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { EVerb } from 'src/app/enums/e-verbs.enum';
 import { AddressDto } from 'src/app/dtos/address/address.dto';
-import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from '../../confirm-dialog.component';
+
 
 @Component({
   selector: 'app-address',
@@ -39,12 +40,20 @@ export class AddressComponent {
   protected eVerb = EVerb;
   protected editableUuid?: string | undefined;
 
-  constructor(private mapService: MapService, private addressService: AddressService, private toast: ToastrService) {
+  protected seeker: string;
+
+  constructor(
+    private mapService: MapService,
+    private addressService: AddressService,
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog
+  ) {
     this.fuente = new VectorSource();
     this.marker = new Feature();
     this.request = new AddressRequest();
     this.editableFlag = false;
     this.editableUuid = '';
+    this.seeker = '';
   }
 
   ngAfterViewInit() {
@@ -74,7 +83,7 @@ export class AddressComponent {
       this.request.lat = coordenadas[1];
       this.map!.removeOverlay;
       this.createMarker(this.request.lng, this.request.lat);
-      this.setCenter(this.request.lng, this.request.lat, 200);
+      this.setCenter(this.request.lng, this.request.lat, 0);
     });
     this.search();
   }
@@ -105,7 +114,6 @@ export class AddressComponent {
       this.request.lng = 0;
       this.request.lat = 0;
     }
-
     this.createMarker(this.request.lng, this.request.lat);
     this.setCenter(this.request.lng, this.request.lat, 1000);
   }
@@ -121,7 +129,8 @@ export class AddressComponent {
           // Crea un marcador y agrégale un icono
           this.createMarker(this.request.lng, this.request.lat);
           this.setCenter(this.request.lng, this.request.lat, 2000);
-          this.setZoom(7, 2000);
+        }else{
+          this.snackBar.open("No se encontraron coinsidencias para la búsqueda", 'SIN RESULTADOS', { duration: 3000})
         }
       },
       error: error => {
@@ -177,14 +186,14 @@ export class AddressComponent {
             this.request.county = data.results[0].components.county;
             this.request.entityUuid = this.entityUuid;
             if (!this.request.title)
-              this.toast.error("Título requerido");
+              this.snackBar.open("Título requerido", 'INCONSISTENTE', { duration: 3000});
             else if (!this.request.address)
-              this.toast.error("La dirección es requerida")
+              this.snackBar.open("La dirección es requerida", 'INCONSISTENTE', { duration: 3000});
             else if (eVerb == EVerb.CREATE) {
               this.addressService.create(this.eEntity, this.request).subscribe({
                 next: data => {
                   console.log(data);
-                  this.toast.success("Se registró correctamente", "ÉXITO");
+                  this.snackBar.open("Se registró correctamente", 'ÉXITO', { duration: 3000});
                   this.btnClose.nativeElement.click();
                   this.refreshAddresses();
                 },
@@ -194,13 +203,13 @@ export class AddressComponent {
               });
             } else if (eVerb == EVerb.UPDATE) {
               if (!this.editableUuid) {
-                this.toast.error("uuid requerido")
+                this.snackBar.open("uuid requerido", 'INCONSISTENTE', { duration: 3000});
                 return;
               }
               this.addressService.update(this.eEntity, this.editableUuid, this.request).subscribe({
                 next: data => {
                   console.log(data);
-                  this.toast.success("Se actualizó correctamente", "ÉXITO");
+                  this.snackBar.open("Se actualizó correctamente", 'OK', { duration: 3000});
                   this.btnClose.nativeElement.click();
                   this.refreshAddresses();
                 },
@@ -217,7 +226,7 @@ export class AddressComponent {
         }
       });
     else
-      this.toast.error("Debes marcar una ubicacíon en el mapa", "INCOMPLETO");
+      this.snackBar.open("Debes marcar una ubicacíon en el mapa", 'INCONSISTENTE', { panelClass: ['z-10000'] });
   }
 
   refreshAddresses(): void {
@@ -231,35 +240,44 @@ export class AddressComponent {
     });
   }
 
-  deleteByEntityUuid(uuid: string) {
-    Swal.fire({
-      title: '¿Estas seguro?',
-      text: "¡Se eliminará esta dirección!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, ¡Eliminar!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
+  deleteByUuid(uuid: string) {
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'CONFIRMACIÓN',
+        content: '¿Estás seguro de eliminar esta dirección?'
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         this.addressService.deleteByUuid(this.eEntity, uuid).subscribe({
           next: data => {
-            console.log(data);
-            Swal.fire(
-              '¡Eliminado!',
-              'El recurso se eliminó correctamente.',
-              'success'
-            )
+            this.snackBar.open("El recurso se eliminó correctamente", 'OK', { duration: 3000})
             this.refreshAddresses();
           },
           error: error => {
             console.log(error);
-            this.toast.error("Error al intentar eliminar el recurso", "ERROR")
+            this.snackBar.open("Error al intentar eliminar el recurso", 'ERROR', { duration: 3000})
           }
         });
       }
-    })
+    });
+  }
+
+  getLocation(): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.request.lat = position.coords.latitude;
+        this.request.lng = position.coords.longitude;
+        this.setCenter(this.request.lng, this.request.lat, 1000);
+        this.setZoom(12, 1000);
+      });
+    } else {
+      this.request.lat = 0;
+      this.request.lng = 0;
+      this.setCenter(this.request.lng, this.request.lat, 1000);
+      this.setZoom(5, 1000);
+      alert("Geolocalización no es soportada por este navegador.");
+    }
   }
 
 }

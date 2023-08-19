@@ -1,5 +1,4 @@
 export class AddressRequest{
-
     title!: string;
     address!: string;
     continent!: string; // Continente
@@ -9,5 +8,4 @@ export class AddressRequest{
     lat!: number;
     lng!: number;
     entityUuid!: string;
-
 }

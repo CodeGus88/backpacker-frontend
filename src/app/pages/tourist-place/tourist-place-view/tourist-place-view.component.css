@@ -1,14 +1,9 @@
-.paragraph{
-    height: 100%;
-}
-
-.data-container{
+.data-container {
     position: relative;
     display: inline-block;
-    /* text-align: center; */
 }
 
-.cover-options{
+.cover-options {
     position: absolute;
     bottom: 1%;
     right: 1%;
@@ -16,20 +11,73 @@
     font-size: small;
 }
 
-
-.category-button{
-    --bs-btn-padding-y: .25rem; 
-    --bs-btn-padding-x: .5rem; 
+.category-button {
+    --bs-btn-padding-y: .25rem;
+    --bs-btn-padding-x: .5rem;
     --bs-btn-font-size: .75rem;
 }
 
-
-.bg-simple-linear {
-    background: linear-gradient(rgb(255, 255, 255), rgb(204, 204, 204));
+.title-bg{
+    background-image: url('/assets/background/title-bg.jpeg');
+    opacity: 0.5;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 
-.vertical-center{
+@keyframes cambiarFondo {
+    0% { background-image: url('/assets/background/OIG.jpeg'); }
+    50% { background-image: url('/assets/background/bg-head-2.jpg'); }
+    100% { background-image: url('/assets/background/OIG.jpeg'); }
+  } 
+.container-bg {
+    /* background-image: url('/assets/background/bg-head-2.jpeg'); */
+    animation: cambiarFondo 120s infinite;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
     display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+.principal-text {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    /* border-radius: 10px; */
+}
+
+.sub-menu-spacer {
+    flex: 1 1 auto;
+}
+
+.full-content{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+
+/* animación de imagen */
+@keyframes miAnimacion {
+    from {
+        transform: scale(0.99);
+    }
+
+    to {
+        transform: scale(1.01);
+    }
+}
+
+img {
+    animation: miAnimacion 5s infinite alternate;
+}
+
+.resume-resume{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp:5
 }
