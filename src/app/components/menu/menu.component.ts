@@ -11,6 +11,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class MenuComponent {
 
+  protected isLogged: boolean = false;
+
   static sessionData: SessionData = new SessionData();
   sessionData: SessionData;
 
@@ -24,6 +26,8 @@ export class MenuComponent {
 
   ngOnInit(){
     this.checkSession();
+    this.isLogged = this.tokenService.isLogged();
+    console.log("isLogged", this.isLogged);
   }
 
   onLogout(){
@@ -37,7 +41,6 @@ export class MenuComponent {
   }
 
   public checkSession(){
-      console.log("navegación actual", document.location.href);
       this.sessionData.isLogged = this.tokenService.isLogged();
       this.sessionData.username = this.tokenService.getUsername();
       if(this.sessionData.isLogged && document.location.href.includes("/login"))

@@ -13,15 +13,19 @@
         </button>
         <button mat-menu-item (click)="redirectTo('touristplaces')">
             <mat-icon>map</mat-icon>
-            <span>Lugares turísticcos</span>
+            <span>Lugares Turísticos</span>
         </button>
         <button mat-menu-item (click)="redirectTo('hotels')">
             <mat-icon>hotels</mat-icon>
             <span>Hoteles</span>
         </button>
-        <button mat-menu-item disabled (click)="redirectTo('login')">
+        <button mat-menu-item *ngIf="!isLogged" (click)="redirectTo('login')">
             <mat-icon>login</mat-icon>
-            <span>Sesión</span>
+            <span>Iniciar Sesión</span>
+        </button>
+        <button mat-menu-item *ngIf="isLogged" (click)="onLogout()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar Sesión</span>
         </button>
     </mat-menu>
 

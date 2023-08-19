@@ -14,6 +14,8 @@ import { GalleryComponent } from 'src/app/components/gallery/gallery.component';
 import { FileUrlGenerator } from 'src/app/constants/files-url';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Subscription, filter, map } from 'rxjs';
+import { TokenService } from 'src/app/auth/services/token.service';
+import { EROLE } from 'src/app/auth/enums/role.enum';
 
 @Component({
   selector: 'app-tourist-place-view',
@@ -21,6 +23,8 @@ import { Subscription, filter, map } from 'rxjs';
   styleUrls: ['./tourist-place-view.component.css']
 })
 export class TouristPlaceViewComponent {
+
+  protected isAdmin = false;
 
   protected gridCols = 2;
   protected ratio: string = '16:9'
@@ -48,6 +52,7 @@ export class TouristPlaceViewComponent {
     private dialog: MatDialog,
     private router: Router,
     private mediaObserver: MediaObserver,
+    private tokenService: TokenService
   ){
     this.uuid = this.route.snapshot.params['uuid'];
     this.tpDto = new TouristPlaceDto();
@@ -56,6 +61,7 @@ export class TouristPlaceViewComponent {
   ngOnInit() {
     this.onLoadData();
     this.mediaChange();
+    this.isAdmin = this.tokenService.hasRole(EROLE.ROLE_ADMIN);
   }
 
   onLoadData(){
@@ -163,7 +169,7 @@ export class TouristPlaceViewComponent {
             eModule: EModule.TOURIST_PLACES,
             eEntity: EEntity.TOURIST_PLACE_FILES,
             entityUuid: this.uuid,
-            writePermission: true
+            writePermission: this.isAdmin
           },
       width: '100%',
       height: 'auto'

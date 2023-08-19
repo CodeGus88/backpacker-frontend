@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { EROLE } from '../enums/role.enum';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
-// Valores almaenados en el navegador
+// Valores almacenados en el navegador
 const TOKEN_KEY = 'Authtoken';
 
 @Injectable({
@@ -25,9 +26,15 @@ export class TokenService {
   }
 
   public isLogged(): boolean{
-    if(this.getToken())
+    if(this.getToken() && !this.isExpired())
       return true;
     return false;
+  }
+
+  public isExpired(): boolean {
+    const token = this.getToken()??'';
+    const helper = new JwtHelperService();
+    return helper.isTokenExpired(token);
   }
 
   public getUsername(): string | null {

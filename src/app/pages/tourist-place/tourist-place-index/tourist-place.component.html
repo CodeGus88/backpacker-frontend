@@ -2,7 +2,7 @@
     <mat-toolbar-row>
         <span class="secondary-toolbar-title">Lugares turísticos</span>
         <span class="secondary-toolbar-spacer"></span>
-        <button mat-icon-button aria-label="Add" (click)="redirectTo('touristplaces/create')">
+        <button mat-icon-button aria-label="Add" *ngIf="isAdmin" (click)="redirectTo('touristplaces/create')">
             <mat-icon>add_circle</mat-icon>
         </button>
     </mat-toolbar-row>

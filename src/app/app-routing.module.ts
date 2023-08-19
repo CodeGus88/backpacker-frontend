@@ -19,18 +19,13 @@ const routes: Routes = [
   { path: 'touristplaces/:uuid', component: TouristPlaceViewComponent },
   { path: 'touristplaces/edit/:uuid', component: TouristPlaceEditComponent },
   { path: '**', component: NotFoundComponent}
-  // { path: '**', redirectTo: '', pathMatch: 'full'}
 ];
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes, /**{
-      onSameUrlNavigation: "ignore",
-      anchorScrolling:'enabled',
-      scrollPositionRestoration: 'enabled'
-    }*/)
+    RouterModule.forRoot(routes)
   ],
   exports: [
     RouterModule

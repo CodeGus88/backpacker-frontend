@@ -48,7 +48,7 @@
                 <div class="mb-2">
                     <mat-form-field class="full-width">
                         <mat-label>Resumen {{form.get('resume')!.value!.length}}/500</mat-label>
-                        <input matInput placeholder="Resumen" formControlName="resume" required maxlength="255"
+                        <input matInput placeholder="Resumen" formControlName="resume" required maxlength="500"
                             autocomplete="off" />
                         <mat-error>Min 10, Max 500</mat-error>
                     </mat-form-field>

@@ -11,6 +11,8 @@ import { EOrder } from 'src/app/enums/e.order.enum';
 import { EEntity } from 'src/app/enums/e-entity.enum';
 import { PageEvent } from '@angular/material/paginator';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { TokenService } from 'src/app/auth/services/token.service';
+import { EROLE } from 'src/app/auth/enums/role.enum';
 
 @Component({
   selector: 'app-list',
@@ -28,6 +30,8 @@ export class TouristPlaceComponent {
   protected ASC: EOrder = EOrder.ASC;
   protected DESC: EOrder = EOrder.DESC;
 
+  protected isAdmin = false;
+
   // Order options
   protected options: any[]; // opciones de filtro
 
@@ -35,7 +39,8 @@ export class TouristPlaceComponent {
     private touristPlaceService: TouristPlaceService,
     private matSnackBar: MatSnackBar,
     private router: Router,
-    private  mediaObserver: MediaObserver
+    private mediaObserver: MediaObserver,
+    private tokenService: TokenService
   ) {
     this.paginate = new Paginate(0, 8, 0, 'rating,createdAt', EOrder.DESC, '');
     this.list = [];
@@ -49,6 +54,7 @@ export class TouristPlaceComponent {
   }
 
   ngOnInit() {
+    this.isAdmin = this.tokenService.hasRole(EROLE.ROLE_ADMIN);
     this.mediaChange();
     this.loadTable(this.touristPlaceService.findAll(this.paginate));
     // searcher event

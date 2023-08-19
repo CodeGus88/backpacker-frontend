@@ -26,6 +26,7 @@ export class GalleryComponent {
 
   protected subscription: Subscription[] = [];
   protected columns = 5;
+  protected textInfo: string = 'Cargando...';
 
   gallery: GalleryImage[] = [];
   protected urlList: FileRef[] = [];
@@ -203,6 +204,10 @@ export class GalleryComponent {
           url: FileUrlGenerator.getDefaultImgUrl(this.data.eEntity)
         });
     });
+    if(this.files.length == 0)
+      this.textInfo = 'No existen imágenes...';
+    else
+      this.textInfo = '...';
   }
 
 }

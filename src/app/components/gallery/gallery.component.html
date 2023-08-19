@@ -7,12 +7,12 @@
             <div class="containerx max-size">
                 <img class="gallery-small-image" [src]="item.url" [alt]="'icon' + (position + 1)"
                     (click)="openDialog(position)">
-                <button mat-mini-fab color="warn" class="cover-btn-right" (click)="delete(item.uuid)">
+                <button mat-mini-fab color="warn" class="cover-btn-right" (click)="delete(item.uuid)" *ngIf="data.writePermission">
                     <mat-icon>delete</mat-icon>
                 </button>
             </div>
         </mat-grid-tile>
-        <span *ngIf="urlList.length == 0">No existen imágenes...</span>
+        <span *ngIf="urlList.length == 0">{{textInfo}}</span>
     </mat-grid-list>
 
     <div class="container text-center" *ngIf="isCreateMode">
