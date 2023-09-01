@@ -1,3 +1,3 @@
 export enum ERating{
-    TOURIST_PLACES_RATING = 'tourist-places-rating'
+    TOURIST_PLACE_RATING = 'tourist-place-rating'
 }

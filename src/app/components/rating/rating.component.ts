@@ -111,11 +111,8 @@ export class RatingComponent {
       if (result) {
         this.ratingService.deleteByUuid(this.eRating!, uuid).subscribe({
           next: data => {
-            if (data) {
               this.onLoadRating();
               this.snackBar.open("Se eliminó correctamente", "ÉXITO", { duration: 3000 });
-            } else
-              this.snackBar.open("Algo salió, no se pudo eliminar este recurso", "FALLÓ", { duration: 3000 });
           },
           error: e => {
             this.snackBar.open(e.message, "ERROR", { duration: 3000 });

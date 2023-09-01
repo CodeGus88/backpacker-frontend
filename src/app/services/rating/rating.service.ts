@@ -24,7 +24,6 @@ export class RatingService extends BaseService {
   }
 
   public create(eRating: ERating, request: FormData): Observable<RatingItem>{
-    // public create(eRating: ERating, request: RatingRequest): Observable<RatingItem>{
     return this.http.post<RatingItem>(`${this.apiUrl}/${eRating}`, request);
   }
 

@@ -44,7 +44,7 @@ export class MenuComponent {
       this.sessionData.isLogged = this.tokenService.isLogged();
       this.sessionData.username = this.tokenService.getUsername();
       if(this.sessionData.isLogged && document.location.href.includes("/login"))
-      this.router.navigate(['/']);
+        this.router.navigate(['/']);
       console.log(this.sessionData);
   }
 

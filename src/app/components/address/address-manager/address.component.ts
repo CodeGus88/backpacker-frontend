@@ -214,7 +214,7 @@ export class AddressComponent {
                   this.refreshAddresses();
                 },
                 error: error => {
-                  console.log(error)
+                  this.snackBar.open(`No se pudo actualizar el recurso ${error.status}`, 'ERROR', { duration: 3000});
                 }
               });
             }
@@ -256,7 +256,7 @@ export class AddressComponent {
           },
           error: error => {
             console.log(error);
-            this.snackBar.open("Error al intentar eliminar el recurso", 'ERROR', { duration: 3000})
+            this.snackBar.open(`Error al intentar eliminar el recurso ${error.status}`, 'ERROR', { duration: 3000})
           }
         });
       }

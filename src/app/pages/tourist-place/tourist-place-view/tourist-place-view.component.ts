@@ -43,7 +43,7 @@ export class TouristPlaceViewComponent {
   protected clickedImg?: FileDto;
 
   // for rating child
-  protected eRating = ERating.TOURIST_PLACES_RATING;
+  protected eRating = ERating.TOURIST_PLACE_RATING;
 
   constructor(
     private route: ActivatedRoute, 
@@ -65,9 +65,24 @@ export class TouristPlaceViewComponent {
   }
 
   onLoadData(){
-    this.touristPlaceService.findById(this.uuid).subscribe({
+    this.touristPlaceService.findById(this.uuid)
+    .pipe(map(data => {
+      var creatAux;
+      var updateAux;
+      if(data.createdAt){
+        creatAux = new Date(data.createdAt!);
+        data.createdAt = creatAux.toLocaleString();
+      }
+      if(data.updatedAt){
+        updateAux = new Date(data.updatedAt!);
+        data.updatedAt = updateAux.toLocaleString();
+      }
+      return data;
+    }))
+    .subscribe({
       next: data => {
         this.tpDto = data;
+        console.log(this.tpDto);
         this.imgUrl = this.tpDto.imageIcon?FileUrlGenerator.getImageUrl(this.eEntity, this.uuid, this.tpDto.imageIcon): FileUrlGenerator.getDefaultImgUrl(this.eEntity);
       },
       error: e => {
@@ -122,11 +137,8 @@ export class TouristPlaceViewComponent {
           if (result) {
             this.touristPlaceService.deleteByUuid(uuid).subscribe({
               next: data =>{
-                if(data){
-                  this.snackBar.open("Se eliminó correctamente.", "¡Eliminado!", {duration: 3000})
-                  window.history.back();
-                } else
-                  this.snackBar.open("No se pudo eliminar el recurso", "RECHAZADO", {duration: 3000})
+                this.snackBar.open("Se eliminó correctamente.", "¡Eliminado!", {duration: 3000})
+                window.history.back();
               },
               error: e => {
                 this.snackBar.open(e.message, "ERROR", {duration: 3000})

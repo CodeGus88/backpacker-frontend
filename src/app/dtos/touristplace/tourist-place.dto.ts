@@ -9,8 +9,8 @@ export class TouristPlaceDto{
     resume?: String;
     description?: String;
     keywords?: String;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: string;
+    updatedAt?: string;
     categories?: Category[] = [];
     addresses: AddressDto[] = [];
 }

@@ -26,13 +26,15 @@ export class TokenService {
   }
 
   public isLogged(): boolean{
-    if(this.getToken() && !this.isExpired())
-      return true;
+    let token: string | null = this.getToken();
+    if(token && token != null && token != '' && token != 'null')
+      if(!this.isExpired())
+        return true;
     return false;
   }
 
   public isExpired(): boolean {
-    const token = this.getToken()??'';
+    const token = this.getToken();
     const helper = new JwtHelperService();
     return helper.isTokenExpired(token);
   }
